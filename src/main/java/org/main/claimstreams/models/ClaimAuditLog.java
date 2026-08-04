@@ -1,7 +1,6 @@
 package org.main.claimstreams.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +9,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "claim_audit_logs")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class ClaimAuditLog {
     @Id
@@ -31,4 +29,12 @@ public class ClaimAuditLog {
 
     @Column(nullable = false)
     private LocalDateTime loggedAt;
+
+    public ClaimAuditLog(String claimReference, String previousStatus, String newStatus, String reasonNote) {
+        this.claimReference = claimReference;
+        this.previousStatus = previousStatus;
+        this.newStatus = newStatus;
+        this.reasonNote = reasonNote;
+        this.loggedAt = LocalDateTime.now();
+    }
 }

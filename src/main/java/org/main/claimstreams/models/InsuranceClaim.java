@@ -1,7 +1,6 @@
 package org.main.claimstreams.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +11,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "insurance_claims")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class InsuranceClaim {
     @Id
@@ -47,4 +45,15 @@ public class InsuranceClaim {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public InsuranceClaim(String claimReference, String policyNumber, String perilType, BigDecimal claimedAmount) {
+        this.claimReference = claimReference;
+        this.policyNumber = policyNumber;
+        this.perilType = perilType;
+        this.claimedAmount = claimedAmount;
+        this.status = "SUBMITTED";
+        this.riskScore = 0;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 }
