@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.main.claimstreams.configs.PolicyStatus;
 
 import java.math.BigDecimal;
 
@@ -11,7 +12,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "claim_policies")
 @NoArgsConstructor
-public class ClaimPolicy {
+public class Policy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,10 +33,11 @@ public class ClaimPolicy {
     private BigDecimal deductible;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean active = true;
+    private PolicyStatus status = PolicyStatus.ACTIVE;
 
-    public ClaimPolicy(String policyNumber, String policyHolderName, String coveredPeril, BigDecimal maxCoverageLimit, BigDecimal deductible) {
+    public Policy(String policyNumber, String policyHolderName, String coveredPeril, BigDecimal maxCoverageLimit, BigDecimal deductible) {
         this.policyNumber = policyNumber;
         this.policyHolderName = policyHolderName;
         this.coveredPeril = coveredPeril;

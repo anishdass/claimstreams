@@ -1,4 +1,4 @@
-package org.main.claimstreams.Repositories;
+package org.main.claimstreams.repositories;
 
 import org.main.claimstreams.models.ClaimAuditLog;
 import org.springframework.data.jpa.repository.JpaRepository;

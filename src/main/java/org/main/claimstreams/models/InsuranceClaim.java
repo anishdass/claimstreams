@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.main.claimstreams.configs.InsuranceClaimStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,8 +34,9 @@ public class InsuranceClaim {
     private BigDecimal approvedPayoutAmount;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     @Setter
-    private String status;
+    private InsuranceClaimStatus status;
 
     @Column(nullable = false)
     @Setter
@@ -51,7 +53,7 @@ public class InsuranceClaim {
         this.policyNumber = policyNumber;
         this.perilType = perilType;
         this.claimedAmount = claimedAmount;
-        this.status = "SUBMITTED";
+        this.status = InsuranceClaimStatus.SUBMITTED;
         this.riskScore = 0;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();

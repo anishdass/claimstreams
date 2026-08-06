@@ -3,6 +3,7 @@ package org.main.claimstreams.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.main.claimstreams.configs.InsuranceClaimStatus;
 
 import java.time.LocalDateTime;
 
@@ -19,10 +20,10 @@ public class ClaimAuditLog {
     private String claimReference;
 
     @Column(nullable = false)
-    private String previousStatus;
+    private InsuranceClaimStatus previousStatus;
 
     @Column(nullable = false)
-    private String newStatus;
+    private InsuranceClaimStatus newStatus;
 
     @Column(nullable = false)
     private String reasonNote;
@@ -30,7 +31,7 @@ public class ClaimAuditLog {
     @Column(nullable = false)
     private LocalDateTime loggedAt;
 
-    public ClaimAuditLog(String claimReference, String previousStatus, String newStatus, String reasonNote) {
+    public ClaimAuditLog(String claimReference, InsuranceClaimStatus previousStatus, InsuranceClaimStatus newStatus, String reasonNote) {
         this.claimReference = claimReference;
         this.previousStatus = previousStatus;
         this.newStatus = newStatus;

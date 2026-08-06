@@ -2,11 +2,13 @@ package org.main.claimstreams.services;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.main.claimstreams.Repositories.ClaimAuditLogRepository;
-import org.main.claimstreams.Repositories.ClaimPolicyRepository;
-import org.main.claimstreams.Repositories.InsuranceClaimRepository;
+import org.main.claimstreams.configs.InsuranceClaimStatus;
+import org.main.claimstreams.configs.PolicyStatus;
+import org.main.claimstreams.repositories.ClaimAuditLogRepository;
+import org.main.claimstreams.repositories.ClaimPolicyRepository;
+import org.main.claimstreams.repositories.InsuranceClaimRepository;
 import org.main.claimstreams.models.ClaimAuditLog;
-import org.main.claimstreams.models.ClaimPolicy;
+import org.main.claimstreams.models.Policy;
 import org.main.claimstreams.models.InsuranceClaim;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -34,16 +36,16 @@ public class ClaimAdjudicationEngine {
     public void adjudicateClaim(String claimJson) {
         try {
             InsuranceClaim claim = objectMapper.readValue(claimJson, InsuranceClaim.class);
-            String previousStatus = claim.getStatus();
+            InsuranceClaimStatus previousStatus = claim.getStatus();
 
-            Optional<ClaimPolicy> policyOpt = policyRepository.findByPolicyNumber(claim.getPolicyNumber());
+            Optional<Policy> policyOpt = policyRepository.findByPolicyNumber(claim.getPolicyNumber());
 
-            if (policyOpt.isEmpty() || !policyOpt.get().isActive()) {
+            if (policyOpt.isEmpty() || !policyOpt.get().getStatus().toString().equalsIgnoreCase(PolicyStatus.ACTIVE.toString())) {
                 rejectClaim(claim, previousStatus, "Policy inactive or non-existent");
                 return;
             }
 
-            ClaimPolicy policy = policyOpt.get();
+            Policy policy = policyOpt.get();
 
             if (!policy.getCoveredPeril().equalsIgnoreCase(claim.getPerilType())) {
                 rejectClaim(claim, previousStatus, "Peril " + claim.getPerilType() + " not covered under policy");
@@ -60,7 +62,7 @@ public class ClaimAdjudicationEngine {
             if (calculatedRiskScore < 30) {
                 BigDecimal netPayout = claim.getClaimedAmount().subtract(policy.getDeductible());
                 claim.setApprovedPayoutAmount(netPayout.max(BigDecimal.ZERO));
-                claim.setStatus("AUTO_APPROVED");
+                claim.setStatus(InsuranceClaimStatus.AUTO_APPROVED);
 
                 claimRepository.save(claim);
                 auditLogRepository.save(new ClaimAuditLog(
@@ -73,7 +75,7 @@ public class ClaimAdjudicationEngine {
                 kafkaTemplate.send("claims-payouts", claim.getClaimReference(), objectMapper.writeValueAsString(claim));
                 System.out.println("[AUTO APPROVED] Claim " + claim.getClaimReference() + " Net Payout: £" + netPayout);
             } else {
-                claim.setStatus("MANUAL_REVIEW");
+                claim.setStatus(InsuranceClaimStatus.MANUAL_REVIEW);
                 claimRepository.save(claim);
 
                 auditLogRepository.save(new ClaimAuditLog(
@@ -84,9 +86,9 @@ public class ClaimAdjudicationEngine {
                 ));
 
                 String slaKey = "claim:sla:timer" + claim.getClaimReference();
-                redisTemplate.opsForValue().set(slaKey, claim.getStatus(), Duration.ofDays(7));
+                redisTemplate.opsForValue().set(slaKey, claim.getStatus().toString(), Duration.ofDays(7));
 
-                System.out.println("[FLAGGED FOR REVIEW] CLaim " + claim.getClaimReference() + " Risk Score: " + calculatedRiskScore);
+                System.out.println("[FLAGGED FOR REVIEW] Claim " + claim.getClaimReference() + " Risk Score: " + calculatedRiskScore);
             }
 
         } catch (Exception e) {
@@ -95,7 +97,7 @@ public class ClaimAdjudicationEngine {
 
     }
 
-    private int evaluateRiskScore(InsuranceClaim claim, ClaimPolicy policy) {
+    private int evaluateRiskScore(InsuranceClaim claim, Policy policy) {
         int score = 0;
 
         String velocityKey = "claims:velocity" + claim.getPolicyNumber();
@@ -123,8 +125,8 @@ public class ClaimAdjudicationEngine {
         return Math.min(100, score);
     }
 
-    private void rejectClaim(InsuranceClaim claim, String previousStatus, String reason) {
-        claim.setStatus("REJECTED");
+    private void rejectClaim(InsuranceClaim claim, InsuranceClaimStatus previousStatus, String reason) {
+        claim.setStatus(InsuranceClaimStatus.REJECTED);
         claimRepository.save(claim);
         auditLogRepository.save(new ClaimAuditLog(
                 claim.getClaimReference(),
