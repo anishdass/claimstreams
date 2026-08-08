@@ -33,8 +33,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/claimstream-websocket/**").permitAll()
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/claimstream-websocket/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/claims").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_ADJUSTER", "ROLE_SENIOR_ADJUSTER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/policy/create").hasAnyAuthority("ROLE_ADJUSTER", "ROLE_SENIOR_ADJUSTER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/claims/my-claims").hasAnyAuthority("ROLE_CUSTOMER")
                         .requestMatchers("/api/v1/adjuster/**").hasAnyAuthority("ROLE_ADJUSTER")
                         .requestMatchers("/api/v1/senior-adjuster/**").hasAnyAuthority("ROLE_SENIOR_ADJUSTER")

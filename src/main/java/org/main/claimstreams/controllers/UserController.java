@@ -1,8 +1,8 @@
 package org.main.claimstreams.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.main.claimstreams.configs.InsuranceClaimStatus;
-import org.main.claimstreams.configs.UserRole;
+import org.main.claimstreams.models.enums.InsuranceClaimStatus;
+import org.main.claimstreams.models.enums.UserRole;
 import org.main.claimstreams.models.InsuranceClaim;
 import org.main.claimstreams.models.User;
 import org.main.claimstreams.repositories.InsuranceClaimRepository;
@@ -38,7 +38,9 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("error", "Email already registered"));
         }
 
-        User newUser = new User(email, password, fullName, role, policyNumber);
+        String encodedPassword = passwordEncoder.encode(password);
+
+        User newUser = new User(email, encodedPassword, fullName, role, policyNumber);
         userRepository.save(newUser);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
@@ -90,6 +92,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(queue);
     }
 
+    @PostMapping("/senior-adjuster/override")
     public ResponseEntity<Map<String, String>> overrideHighRiskClaim(
             @RequestParam String claimReference,
             @RequestParam String decision,

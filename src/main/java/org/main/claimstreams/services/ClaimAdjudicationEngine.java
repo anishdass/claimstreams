@@ -2,8 +2,8 @@ package org.main.claimstreams.services;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.main.claimstreams.configs.InsuranceClaimStatus;
-import org.main.claimstreams.configs.PolicyStatus;
+import org.main.claimstreams.models.enums.InsuranceClaimStatus;
+import org.main.claimstreams.models.enums.PolicyStatus;
 import org.main.claimstreams.repositories.ClaimAuditLogRepository;
 import org.main.claimstreams.repositories.ClaimPolicyRepository;
 import org.main.claimstreams.repositories.InsuranceClaimRepository;
@@ -47,7 +47,7 @@ public class ClaimAdjudicationEngine {
 
             Policy policy = policyOpt.get();
 
-            if (!policy.getCoveredPeril().equalsIgnoreCase(claim.getPerilType())) {
+            if (!policy.getCoveredPeril().name().equalsIgnoreCase(claim.getPerilType().name())) {
                 rejectClaim(claim, previousStatus, "Peril " + claim.getPerilType() + " not covered under policy");
             }
 

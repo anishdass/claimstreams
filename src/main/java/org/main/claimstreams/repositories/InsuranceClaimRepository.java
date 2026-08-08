@@ -1,6 +1,6 @@
 package org.main.claimstreams.repositories;
 
-import org.main.claimstreams.configs.InsuranceClaimStatus;
+import org.main.claimstreams.models.enums.InsuranceClaimStatus;
 import org.main.claimstreams.models.InsuranceClaim;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

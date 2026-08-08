@@ -1,4 +1,4 @@
-package org.main.claimstreams.configs;
+package org.main.claimstreams.models.enums;
 
 public enum UserRole {
     ROLE_CUSTOMER,

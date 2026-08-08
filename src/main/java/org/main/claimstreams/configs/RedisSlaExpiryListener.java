@@ -3,6 +3,7 @@ package org.main.claimstreams.configs;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.Nullable;
+import org.main.claimstreams.models.enums.InsuranceClaimStatus;
 import org.main.claimstreams.repositories.ClaimAuditLogRepository;
 import org.main.claimstreams.repositories.InsuranceClaimRepository;
 import org.main.claimstreams.models.ClaimAuditLog;

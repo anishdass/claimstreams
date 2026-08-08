@@ -2,6 +2,7 @@ package org.main.claimstreams;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.main.claimstreams.models.enums.Peril;
 import org.main.claimstreams.repositories.ClaimAuditLogRepository;
 import org.main.claimstreams.repositories.ClaimPolicyRepository;
 import org.main.claimstreams.repositories.InsuranceClaimRepository;
@@ -74,7 +75,7 @@ class ClaimstreamsApplicationTests {
         Policy activePolicy = new Policy(
                 "POL-TEST-001",
                 "Anish",
-                "FLOOD",
+                Peril.FLOOD,
                 new BigDecimal("10000.00"),
                 new BigDecimal("250.00")
         );
@@ -86,7 +87,7 @@ class ClaimstreamsApplicationTests {
         InsuranceClaim claim = new InsuranceClaim(
                 "CLM-TEST-8888",
                 "POL-TEST-001",
-                "FLOOD",
+                Peril.FLOOD,
                 new BigDecimal("1500.00")
         );
 
@@ -95,13 +96,13 @@ class ClaimstreamsApplicationTests {
         await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
             var foundClaim = claimRepository.findByClaimReference("CLM-TEST-8888");
             assertTrue(foundClaim.isPresent());
-            assertEquals("AUTO_APPROVED", foundClaim.get().getStatus());
+            assertEquals("AUTO_APPROVED", foundClaim.get().getStatus().name());
             assertEquals(new BigDecimal("1250.00"), foundClaim.get().getApprovedPayoutAmount());
         });
 
         var logs = auditLogRepository.findByClaimReference("CLM-TEST-8888");
         assertFalse(logs.isEmpty());
-        assertEquals("AUTO_APPROVED", logs.get().getNewStatus());
+        assertEquals("AUTO_APPROVED", logs.get().getNewStatus().name());
     }
 
 }

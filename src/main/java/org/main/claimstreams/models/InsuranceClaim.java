@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.main.claimstreams.configs.InsuranceClaimStatus;
+import org.main.claimstreams.models.enums.InsuranceClaimStatus;
+import org.main.claimstreams.models.enums.Peril;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class InsuranceClaim {
     private String policyNumber;
 
     @Column(nullable = false)
-    private String perilType;
+    private Peril perilType;
 
     @Column(nullable = false)
     private BigDecimal claimedAmount;
@@ -48,7 +49,7 @@ public class InsuranceClaim {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public InsuranceClaim(String claimReference, String policyNumber, String perilType, BigDecimal claimedAmount) {
+    public InsuranceClaim(String claimReference, String policyNumber, Peril perilType, BigDecimal claimedAmount) {
         this.claimReference = claimReference;
         this.policyNumber = policyNumber;
         this.perilType = perilType;

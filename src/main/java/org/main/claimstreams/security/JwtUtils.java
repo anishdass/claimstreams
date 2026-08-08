@@ -2,7 +2,8 @@ package org.main.claimstreams.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.main.claimstreams.configs.UserRole;
+import org.main.claimstreams.models.enums.UserRole;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
@@ -10,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class JwtUtils {
     private final SecretKey key = Keys.hmacShaKeyFor("ClaimStreamSecretKeyForEnterpriseSecurityRbac2026!".getBytes());
 

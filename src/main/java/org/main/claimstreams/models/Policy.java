@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.main.claimstreams.configs.PolicyStatus;
+import org.main.claimstreams.models.enums.Peril;
+import org.main.claimstreams.models.enums.PolicyStatus;
 
 import java.math.BigDecimal;
 
@@ -24,7 +25,8 @@ public class Policy {
     private String policyHolderName;
 
     @Column(nullable = false)
-    private String coveredPeril;
+    @Enumerated(EnumType.STRING)
+    private Peril coveredPeril;
 
     @Column(nullable = false)
     private BigDecimal maxCoverageLimit;
@@ -37,7 +39,7 @@ public class Policy {
     @Column(nullable = false)
     private PolicyStatus status = PolicyStatus.ACTIVE;
 
-    public Policy(String policyNumber, String policyHolderName, String coveredPeril, BigDecimal maxCoverageLimit, BigDecimal deductible) {
+    public Policy(String policyNumber, String policyHolderName, Peril coveredPeril, BigDecimal maxCoverageLimit, BigDecimal deductible) {
         this.policyNumber = policyNumber;
         this.policyHolderName = policyHolderName;
         this.coveredPeril = coveredPeril;

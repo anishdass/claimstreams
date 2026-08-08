@@ -3,7 +3,7 @@ package org.main.claimstreams.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.main.claimstreams.configs.InsuranceClaimStatus;
+import org.main.claimstreams.models.enums.InsuranceClaimStatus;
 
 import java.time.LocalDateTime;
 

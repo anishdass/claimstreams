@@ -1,5 +1,6 @@
 package org.main.claimstreams.services;
 
+import org.main.claimstreams.models.enums.Peril;
 import org.main.claimstreams.models.InsuranceClaim;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CatastropheIngestionService {
     private final ClaimProducer claimProducer;
     private final Random random = new Random();
-    private final String[] perils = {"FLOOD", "WINDSTORM", "FIRE", "THEFT"};
+    private final Peril[] perils = {Peril.FLOOD, Peril.STORM, Peril.FIRE, Peril.ESCAPE_OF_WATER};
 
     public CatastropheIngestionService(ClaimProducer claimProducer) {
         this.claimProducer = claimProducer;
@@ -26,7 +27,7 @@ public class CatastropheIngestionService {
         ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
         CountDownLatch starterLatch = new CountDownLatch(1);
         CountDownLatch finishLatch = new CountDownLatch(totalClaims);
-        AtomicInteger successfulIngestions = new AtomicInteger(0);
+        AtomicInteger successfulIngestion = new AtomicInteger(0);
 
         for (int i = 0; i < totalClaims; i++) {
             final int index = i;
@@ -36,12 +37,12 @@ public class CatastropheIngestionService {
 
                     String claimRef = "STORM-2026-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
                     String policyNum = "POL-UK-" + (1000 + (index % 50));
-                    String peril = perils[random.nextInt(perils.length)];
+                    Peril peril = perils[random.nextInt(perils.length)];
                     BigDecimal amount = BigDecimal.valueOf(500 + random.nextInt(9500));
 
                     InsuranceClaim claim = new InsuranceClaim(claimRef, policyNum, peril, amount);
                     claimProducer.publishClaimSubmittedEvent(claim);
-                    successfulIngestions.incrementAndGet();
+                    successfulIngestion.incrementAndGet();
                 } catch (Exception e) {
                     System.err.println("Ingestion error: " + e.getMessage());
                 } finally {
@@ -57,6 +58,6 @@ public class CatastropheIngestionService {
         } finally {
             executor.shutdown();
         }
-        return successfulIngestions.get();
+        return successfulIngestion.get();
     }
 }

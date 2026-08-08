@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.main.claimstreams.configs.UserRole;
+import org.main.claimstreams.models.enums.UserRole;
 
 @Entity
 @Table(name = "users")

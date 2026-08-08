@@ -1,6 +1,7 @@
 package org.main.claimstreams.controllers;
 
 import lombok.AllArgsConstructor;
+import org.main.claimstreams.models.enums.Peril;
 import org.main.claimstreams.models.InsuranceClaim;
 import org.main.claimstreams.services.CatastropheIngestionService;
 import org.main.claimstreams.services.ClaimProducer;
@@ -23,7 +24,7 @@ public class ClaimIngestionController {
     @PostMapping
     public ResponseEntity<Map<String, String>> submitClaim(
             @RequestParam String policyNumber,
-            @RequestParam String perilType,
+            @RequestParam Peril perilType,
             @RequestParam BigDecimal claimedAmount
     ) {
         String claimReference = "CLM-2026-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
@@ -34,7 +35,7 @@ public class ClaimIngestionController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(Map.of(
                 "status", "ACCEPTED",
                 "claimReference", claimReference,
-                "message", "Claim queued into kafka pipeline for real-time adjudication."
+                "message", "Claim queued into Kafka pipeline for real-time adjudication."
         ));
     }
 
@@ -53,7 +54,7 @@ public class ClaimIngestionController {
         ));
     }
 
-    @PostMapping("/simulate-storm")
+    @PostMapping("/simulate-peril")
     public ResponseEntity<Map<String, Object>> triggerCatastropheStorm(
             @RequestParam(defaultValue = "1000") int claimCount
     ) {
