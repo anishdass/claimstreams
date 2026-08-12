@@ -9,6 +9,7 @@ import org.main.claimstreams.models.enums.Peril;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "insurance_claims")
@@ -49,8 +50,8 @@ public class InsuranceClaim {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public InsuranceClaim(String claimReference, String policyNumber, Peril perilType, BigDecimal claimedAmount) {
-        this.claimReference = claimReference;
+    public InsuranceClaim(String policyNumber, Peril perilType, BigDecimal claimedAmount) {
+        this.claimReference = "CLM-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.policyNumber = policyNumber;
         this.perilType = perilType;
         this.claimedAmount = claimedAmount;

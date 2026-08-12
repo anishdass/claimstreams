@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ClaimPolicyRepository extends JpaRepository<Policy, Long> {
+public interface PolicyRepository extends JpaRepository<Policy, Long> {
     Optional<Policy> findByPolicyNumber(String policyNumber);
+
+    Optional<Policy> findByPolicyHolderEmailId(String emailId);
 }

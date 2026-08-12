@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.main.claimstreams.models.enums.Peril;
 import org.main.claimstreams.repositories.ClaimAuditLogRepository;
-import org.main.claimstreams.repositories.ClaimPolicyRepository;
+import org.main.claimstreams.repositories.PolicyRepository;
 import org.main.claimstreams.repositories.InsuranceClaimRepository;
 import org.main.claimstreams.models.Policy;
 import org.main.claimstreams.models.InsuranceClaim;
@@ -22,6 +22,8 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,10 +63,12 @@ class ClaimstreamsApplicationTests {
     private InsuranceClaimRepository claimRepository;
 
     @Autowired
-    private ClaimPolicyRepository policyRepository;
+    private PolicyRepository policyRepository;
 
     @Autowired
     private ClaimAuditLogRepository auditLogRepository;
+
+    Policy activePolicy;
 
     @BeforeEach
     void setUp() {
@@ -72,10 +76,16 @@ class ClaimstreamsApplicationTests {
         policyRepository.deleteAll();
         auditLogRepository.deleteAll();
 
-        Policy activePolicy = new Policy(
-                "POL-TEST-001",
+        Set<Peril> perils = new HashSet<>();
+        perils.add(Peril.FLOOD);
+        perils.add(Peril.FIRE);
+        perils.add(Peril.STORM);
+
+
+        activePolicy = new Policy(
                 "Anish",
-                Peril.FLOOD,
+                "anishdassatoffice@gmail.com",
+                perils,
                 new BigDecimal("10000.00"),
                 new BigDecimal("250.00")
         );
@@ -85,8 +95,7 @@ class ClaimstreamsApplicationTests {
     @Test
     void testEndToEndAutoApproval() {
         InsuranceClaim claim = new InsuranceClaim(
-                "CLM-TEST-8888",
-                "POL-TEST-001",
+                activePolicy.getPolicyNumber(),
                 Peril.FLOOD,
                 new BigDecimal("1500.00")
         );

@@ -39,11 +39,12 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/claims").hasAnyAuthority("ROLE_CUSTOMER", "ROLE_ADJUSTER", "ROLE_SENIOR_ADJUSTER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/policy/create").hasAnyAuthority("ROLE_ADJUSTER", "ROLE_SENIOR_ADJUSTER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/claims/my-claims").hasAnyAuthority("ROLE_CUSTOMER")
-                        .requestMatchers("/api/v1/adjuster/**").hasAnyAuthority("ROLE_ADJUSTER")
-                        .requestMatchers("/api/v1/senior-adjuster/**").hasAnyAuthority("ROLE_SENIOR_ADJUSTER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/claims").hasAnyRole("CUSTOMER", "ADJUSTER", "SENIOR_ADJUSTER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/policy/create").hasAnyRole("ADJUSTER", "SENIOR_ADJUSTER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/claims/my-claims").hasRole("CUSTOMER")
+                        .requestMatchers("/api/v1/claims/**").hasAnyRole("ADJUSTER", "SENIOR_ADJUSTER")
+                        .requestMatchers("/api/v1/adjuster/**").hasAnyRole("ADJUSTER", "SENIOR_ADJUSTER")
+                        .requestMatchers("/api/v1/senior-adjuster/**").hasRole("SENIOR_ADJUSTER")
                         .anyRequest().authenticated()
                 );
         security.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

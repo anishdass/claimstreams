@@ -1,29 +1,31 @@
 package org.main.claimstreams.services;
 
+import lombok.RequiredArgsConstructor;
+import org.main.claimstreams.models.Policy;
 import org.main.claimstreams.models.enums.Peril;
 import org.main.claimstreams.models.InsuranceClaim;
+import org.main.claimstreams.repositories.PolicyRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.HashSet;
 import java.util.Random;
-import java.util.UUID;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
-
+@RequiredArgsConstructor
 public class CatastropheIngestionService {
     private final ClaimProducer claimProducer;
+    private final PolicyRepository policyRepository;
     private final Random random = new Random();
     private final Peril[] perils = {Peril.FLOOD, Peril.STORM, Peril.FIRE, Peril.ESCAPE_OF_WATER};
 
-    public CatastropheIngestionService(ClaimProducer claimProducer) {
-        this.claimProducer = claimProducer;
-    }
-
-    public int simulateCatastropheStorm(int totalClaims) {
+    public int simulatePeril(int totalClaims) {
         ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
         CountDownLatch starterLatch = new CountDownLatch(1);
         CountDownLatch finishLatch = new CountDownLatch(totalClaims);
@@ -35,12 +37,29 @@ public class CatastropheIngestionService {
                 try {
                     starterLatch.await();
 
-                    String claimRef = "STORM-2026-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-                    String policyNum = "POL-UK-" + (1000 + (index % 50));
-                    Peril peril = perils[random.nextInt(perils.length)];
-                    BigDecimal amount = BigDecimal.valueOf(500 + random.nextInt(9500));
+                    Set<Peril> peril = new HashSet<>();
+                    peril.add(perils[random.nextInt(perils.length)]);
 
-                    InsuranceClaim claim = new InsuranceClaim(claimRef, policyNum, peril, amount);
+                    double randomCoverage = 10000 + (random.nextInt(10) * 10000);
+                    int deductiblePercentage = random.nextInt(2, 5);
+                    double deductible = deductiblePercentage * randomCoverage / 100;
+
+
+                    Policy policy = new Policy(
+                            "Anish",
+                            "anishdassatoffice@gmail.com",
+                            peril,
+                            BigDecimal.valueOf(randomCoverage),
+                            BigDecimal.valueOf(deductible)
+                    );
+
+                    policyRepository.save(policy);
+
+                    System.out.println("[POLICY CREATED]: " + policy.getPolicyNumber());
+
+                    BigDecimal claimedAmount = BigDecimal.valueOf(random.nextDouble() * randomCoverage).setScale(2, RoundingMode.HALF_UP);
+
+                    InsuranceClaim claim = new InsuranceClaim(policy.getPolicyNumber(), peril.stream().findFirst().orElse(null), claimedAmount);
                     claimProducer.publishClaimSubmittedEvent(claim);
                     successfulIngestion.incrementAndGet();
                 } catch (Exception e) {

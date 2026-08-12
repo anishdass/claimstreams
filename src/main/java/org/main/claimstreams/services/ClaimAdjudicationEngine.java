@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import org.main.claimstreams.models.enums.InsuranceClaimStatus;
 import org.main.claimstreams.models.enums.PolicyStatus;
 import org.main.claimstreams.repositories.ClaimAuditLogRepository;
-import org.main.claimstreams.repositories.ClaimPolicyRepository;
+import org.main.claimstreams.repositories.PolicyRepository;
 import org.main.claimstreams.repositories.InsuranceClaimRepository;
 import org.main.claimstreams.models.ClaimAuditLog;
 import org.main.claimstreams.models.Policy;
@@ -25,7 +25,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ClaimAdjudicationEngine {
     private final InsuranceClaimRepository claimRepository;
-    private final ClaimPolicyRepository policyRepository;
+    private final PolicyRepository policyRepository;
     private final ClaimAuditLogRepository auditLogRepository;
     private final StringRedisTemplate redisTemplate;
     private final KafkaTemplate<String, String> kafkaTemplate;
@@ -40,14 +40,14 @@ public class ClaimAdjudicationEngine {
 
             Optional<Policy> policyOpt = policyRepository.findByPolicyNumber(claim.getPolicyNumber());
 
-            if (policyOpt.isEmpty() || !policyOpt.get().getStatus().toString().equalsIgnoreCase(PolicyStatus.ACTIVE.toString())) {
+            if (policyOpt.isEmpty() || !policyOpt.get().getStatus().name().equalsIgnoreCase(PolicyStatus.ACTIVE.name())) {
                 rejectClaim(claim, previousStatus, "Policy inactive or non-existent");
                 return;
             }
 
             Policy policy = policyOpt.get();
 
-            if (!policy.getCoveredPeril().name().equalsIgnoreCase(claim.getPerilType().name())) {
+            if (!policy.getCoveredPeril().contains(claim.getPerilType())) {
                 rejectClaim(claim, previousStatus, "Peril " + claim.getPerilType() + " not covered under policy");
             }
 
@@ -100,7 +100,7 @@ public class ClaimAdjudicationEngine {
     private int evaluateRiskScore(InsuranceClaim claim, Policy policy) {
         int score = 0;
 
-        String velocityKey = "claims:velocity" + claim.getPolicyNumber();
+        String velocityKey = "claims:velocity:" + claim.getPolicyNumber();
         Long recentClaimsCount = redisTemplate.opsForValue().increment(velocityKey);
 
         if (recentClaimsCount != null && recentClaimsCount == 1) {

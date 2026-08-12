@@ -8,6 +8,10 @@ import org.main.claimstreams.models.enums.Peril;
 import org.main.claimstreams.models.enums.PolicyStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -18,15 +22,20 @@ public class Policy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, updatable = false)
     private String policyNumber;
 
     @Column(nullable = false)
     private String policyHolderName;
 
     @Column(nullable = false)
+    private String policyHolderEmailId;
+
+    @ElementCollection(targetClass = Peril.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "policy_perils", joinColumns = @JoinColumn(name = "policy_id"))
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Peril coveredPeril;
+    private Set<Peril> coveredPeril = new HashSet<>();
 
     @Column(nullable = false)
     private BigDecimal maxCoverageLimit;
@@ -39,9 +48,10 @@ public class Policy {
     @Column(nullable = false)
     private PolicyStatus status = PolicyStatus.ACTIVE;
 
-    public Policy(String policyNumber, String policyHolderName, Peril coveredPeril, BigDecimal maxCoverageLimit, BigDecimal deductible) {
-        this.policyNumber = policyNumber;
+    public Policy(String policyHolderName, String policyHolderEmailId, Set<Peril> coveredPeril, BigDecimal maxCoverageLimit, BigDecimal deductible) {
+        this.policyNumber = "POL-UK-" + LocalDateTime.now().getYear() + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.policyHolderName = policyHolderName;
+        this.policyHolderEmailId = policyHolderEmailId;
         this.coveredPeril = coveredPeril;
         this.maxCoverageLimit = maxCoverageLimit;
         this.deductible = deductible;

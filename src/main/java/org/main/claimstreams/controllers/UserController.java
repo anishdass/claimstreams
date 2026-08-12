@@ -31,8 +31,7 @@ public class UserController {
             @RequestParam String email,
             @RequestParam String password,
             @RequestParam String fullName,
-            @RequestParam UserRole role,
-            @RequestParam(required = false) String policyNumber
+            @RequestParam UserRole role
     ) {
         if (userRepository.existsByEmail(email)) {
             return ResponseEntity.badRequest().body(Map.of("error", "Email already registered"));
@@ -40,7 +39,7 @@ public class UserController {
 
         String encodedPassword = passwordEncoder.encode(password);
 
-        User newUser = new User(email, encodedPassword, fullName, role, policyNumber);
+        User newUser = new User(email, encodedPassword, fullName, role);
         userRepository.save(newUser);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(

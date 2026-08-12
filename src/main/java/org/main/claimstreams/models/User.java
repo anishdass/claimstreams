@@ -29,18 +29,17 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
+    @Setter
     private String policyNumber;
 
     public User(String email,
                 String password,
                 String fullName,
-                UserRole role,
-                String policyNumber
+                UserRole role
     ) {
         this.email = email;
         this.password = password;
         this.fullName = fullName;
         this.role = role;
-        this.policyNumber = policyNumber;
     }
 }
