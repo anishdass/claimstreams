@@ -1,4 +1,21 @@
-const ClaimDetails = ({setClaims, setSelectedClaim, selectedClaim, renderStatusBadge}) => {
+import { useState } from "react";
+
+const ClaimDetails = ({
+  setClaims,
+  setSelectedClaim,
+  selectedClaim,
+  renderStatusBadge,
+}) => {
+  const [activeModalClaim, setActiveModalClaim] = useState(null);
+
+  const handleOpenPolicyModal = (claim) => {
+    setActiveModalClaim(claim);
+  };
+  
+  const hanleCloseModal = () => {
+    setActiveModalClaim(null);
+  };
+
   const handleApprove = (claimId) => {
     setClaims((prev) =>
       prev.map((c) => {
@@ -64,9 +81,14 @@ const ClaimDetails = ({setClaims, setSelectedClaim, selectedClaim, renderStatusB
             </div>
             <div className='flex justify-between text-xs'>
               <span className='text-slate-400'>Policy Identifier:</span>
-              <span className='font-mono text-slate-200'>
+              <button
+                type='button'
+                onClick={() =>
+                  alert(`Policy ID clicked: ${selectedClaim.policyId}`)
+                }
+                className='font-mono text-xs font-semibold text-indigo-300 bg-indigo-950/80 hover:bg-indigo-600 hover:text-white border border-indigo-500/50 hover:border-indigo-400 rounded-full px-3 py-1 shadow-sm shadow-indigo-500/20 hover:shadow-indigo-500/50 cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 active:scale-95'>
                 {selectedClaim.policyId}
-              </span>
+              </button>
             </div>
             <div className='flex justify-between text-xs'>
               <span className='text-slate-400'>Category:</span>
