@@ -1,18 +1,21 @@
 import { useState } from "react";
 
-const Topbar = ({setClaims, setSelectedClaim}) => {
+const Topbar = ({ setClaims, setSelectedClaim }) => {
   const [isSimulating, setIsSimulating] = useState(false);
 
   // Simulate incoming real-time claims stream (Kafka Mock)
   const triggerSimulatedClaim = () => {
     setIsSimulating(true);
+
     setTimeout(() => {
       const idNum = Math.floor(1000 + Math.random() * 9000);
+
       const possibleAmounts = [800, 1000, 2500, 3200, 6500, 10000];
+
       const claimed =
         possibleAmounts[Math.floor(Math.random() * possibleAmounts.length)];
 
-      // Mirroring BigDecimal modulus adjudication rules
+      // Adjudication rules
       const isRoundThousand = claimed % 1000 === 0;
       const isHighValue = claimed > 5000;
 
@@ -41,8 +44,8 @@ const Topbar = ({setClaims, setSelectedClaim}) => {
         claimedAmount: claimed,
         deductible: 200.0,
         payout: payout > 0 ? payout : 0,
-        status: status,
-        reason: reason,
+        status,
+        reason,
         incidentDate: new Date().toISOString().split("T")[0],
         category: "Automated Ingestion",
       };
@@ -54,33 +57,121 @@ const Topbar = ({setClaims, setSelectedClaim}) => {
   };
 
   return (
-    <div>
-      <header className='flex items-center justify-between border-b border-slate-800 pb-5 mb-6'>
-        <div className='flex items-center gap-3'>
-          <div className='bg-indigo-600 p-64 rounded-lg text-white font-bold'>
-            🛡️
+    <header className="mb-8">
+      <div className="flex flex-col gap-5 rounded-2xl border border-slate-800 bg-slate-950/70 px-6 py-5 shadow-xl shadow-black/10 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
+
+        {/* Brand */}
+        <div className="flex items-center gap-4">
+          
+          {/* Logo */}
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/20">
+            <span className="text-xl">🛡️</span>
+
+            {/* Live indicator */}
+            <span className="absolute -right-1 -top-1 flex h-4 w-4">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span>
+              <span className="relative inline-flex h-4 w-4 rounded-full border-2 border-slate-950 bg-emerald-500"></span>
+            </span>
           </div>
+
+          {/* Title */}
           <div>
-            <h1 className='text-xl font-bold tracking-wide'>
-              InsurTech Adjudication Engine
-            </h1>
-            <p className='text-xs text-slate-400'>
-              Live Event-Driven Stream & Adjuster Control Console
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-bold tracking-tight text-white">
+                Claim<span className="text-indigo-400">Streams</span>
+              </h1>
+
+              <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
+                Live
+              </span>
+            </div>
+
+            <p className="mt-1 text-xs text-slate-400">
+              Event-driven claims & adjudication control console
             </p>
           </div>
         </div>
-        <div className='flex items-center gap-3'>
+
+        {/* Right side */}
+        <div className="flex items-center gap-4">
+
+          {/* Kafka status */}
+          <div className="hidden items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/70 px-3 py-2 md:flex">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+
+            <div className="leading-none">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+                Stream
+              </p>
+              <p className="mt-1 text-xs font-medium text-slate-300">
+                Kafka Connected
+              </p>
+            </div>
+          </div>
+
+          {/* Simulate button */}
           <button
             onClick={triggerSimulatedClaim}
             disabled={isSimulating}
-            className='bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/30'>
-            {isSimulating
-              ? "⚡ Ingesting Stream..."
-              : "⚡ Simulate Incoming Claim Stream"}
+            className="
+              group
+              relative
+              flex
+              items-center
+              gap-2.5
+              overflow-hidden
+              rounded-xl
+              bg-gradient-to-r
+              from-indigo-600
+              to-violet-600
+              px-4
+              py-2.5
+              text-xs
+              font-semibold
+              text-white
+              shadow-lg
+              shadow-indigo-600/20
+              transition-all
+              duration-200
+              hover:-translate-y-0.5
+              hover:from-indigo-500
+              hover:to-violet-500
+              hover:shadow-indigo-500/30
+              disabled:cursor-not-allowed
+              disabled:opacity-60
+              disabled:hover:translate-y-0
+            "
+          >
+            {/* Shine effect */}
+            <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+
+            <span className="relative text-sm">
+              {isSimulating ? "⟳" : "⚡"}
+            </span>
+
+            <span className="relative">
+              {isSimulating
+                ? "Ingesting Stream..."
+                : "Simulate Incoming Claim"}
+            </span>
           </button>
         </div>
-      </header>
-    </div>
+      </div>
+
+      {/* Bottom status bar */}
+      <div className="mt-3 flex items-center justify-between px-1 text-[11px] text-slate-500">
+        <div className="flex items-center gap-2">
+          <span className="text-slate-600">SYSTEM</span>
+          <span className="text-slate-700">•</span>
+          <span>Real-time event processing enabled</span>
+        </div>
+
+        <div className="hidden sm:block">
+          <span className="text-slate-600">ENV</span>{" "}
+          <span className="font-medium text-slate-400">DEVELOPMENT</span>
+        </div>
+      </div>
+    </header>
   );
 };
 

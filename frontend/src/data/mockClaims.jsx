@@ -32,7 +32,7 @@ export const getInitialClaims = () => {
         claimedAmount: 8500.00,
         deductible: 500.00,
         payout: 0.00,
-        status: "HIGH_VALUE_AUDIT",
+        status: "MANUAL_REVIEW",
         reason: "Audit Trigger: Exceeds High-Value Boundary (£8,500.00 > £5,000.00)",
         incidentDate: "2026-03-29",
         category: "Vehicle Collision"
