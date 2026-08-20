@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface InsuranceClaimRepository extends JpaRepository<InsuranceClaim, Long> {
+public interface InsuranceClaimRepository extends JpaRepository<InsuranceClaim, String> {
     Optional<InsuranceClaim> findByClaimReference(String claimReference);
 
     List<InsuranceClaim> findByStatus(InsuranceClaimStatus status);

@@ -42,13 +42,13 @@ public class ClaimIngestionController {
             policy = policyOpt.get();
         }
 
-        InsuranceClaim claim = new InsuranceClaim(policy.getPolicyNumber(), perilType, claimedAmount);
+        InsuranceClaim claim = new InsuranceClaim(policy, perilType, claimedAmount);
 
         claimProducer.publishClaimSubmittedEvent(claim);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(Map.of(
                 "status", "ACCEPTED",
-                "claimReference", claim.getClaimReference(),
+                "claimReference", claim.getClaimId(),
                 "message", "Claim queued into Kafka pipeline for real-time adjudication."
         ));
     }

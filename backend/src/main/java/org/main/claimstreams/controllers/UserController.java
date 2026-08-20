@@ -62,7 +62,7 @@ public class UserController {
         }
 
         User user = userOpt.get();
-        String token = jwtUtils.generateToken(user.getEmail(), user.getRole(), user.getPolicyNumber());
+        String token = jwtUtils.generateToken(user.getEmail(), user.getRole(), user.getPolicies().getPolicyNumber());
 
         return ResponseEntity.status(HttpStatus.OK).body(Map.of(
                 "token", token,
@@ -79,7 +79,7 @@ public class UserController {
         User user = userRepository.findByEmail(email).orElseThrow();
 
         List<InsuranceClaim> myClaims = claimRepository.findAll().stream()
-                .filter(c -> c.getPolicyNumber().equalsIgnoreCase(user.getPolicyNumber()))
+                .filter(c -> c.getPolicy().equals(user.getPolicies()))
                 .toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(myClaims);

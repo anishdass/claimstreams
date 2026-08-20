@@ -95,7 +95,7 @@ class ClaimstreamsApplicationTests {
     @Test
     void testEndToEndAutoApproval() {
         InsuranceClaim claim = new InsuranceClaim(
-                activePolicy.getPolicyNumber(),
+                activePolicy,
                 Peril.FLOOD,
                 new BigDecimal("1500.00")
         );

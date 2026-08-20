@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.main.claimstreams.models.enums.UserRole;
 
+import java.util.ArrayList;
+
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
@@ -30,7 +32,14 @@ public class User {
     private UserRole role;
 
     @Setter
-    private String policyNumber;
+    @ManyToOne
+    @JoinColumn(name = "policies_policy_number")
+    private Policy policies;
+
+    @Setter
+    @ManyToOne
+    @JoinColumn(name = "claims_claim_id")
+    private InsuranceClaim claims;
 
     public User(String email,
                 String password,

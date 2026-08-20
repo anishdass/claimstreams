@@ -1,14 +1,34 @@
-import './App.css'
-import InsurTechDashboard from './components/InsureTechDashboard'
+import "./App.css";
+import AdjusterDashboard from "./components/AdjusterDashboard";
+import CustomerDashboard from "./components/CustomerDashboard";
+import Login from "./components/Login";
+import { AuthProvider } from "./context/AuthContext";
+import { useAuth } from "./context/AuthContext";
 
-function App() {
-  
+function MainContent() {
+  const { user } = useAuth();
 
   return (
     <div className='bg-slate-950 min-h-screen'>
-      <InsurTechDashboard/>
+      {!user ? (
+        <Login />
+      ) : ["ADJUSTER", "SENIOR_ADJUSTER"].includes(user.role) ? (
+        <AdjusterDashboard />
+      ) : user.role === "CUSTOMER" ? (
+        <CustomerDashboard user={user} />
+      ) : (
+        <Login />
+      )}
     </div>
-  )
+  );
 }
 
-export default App
+function App() {
+  return (
+    <AuthProvider>
+      <MainContent />
+    </AuthProvider>
+  );
+}
+
+export default App;

@@ -32,7 +32,6 @@ public class CatastropheIngestionService {
         AtomicInteger successfulIngestion = new AtomicInteger(0);
 
         for (int i = 0; i < totalClaims; i++) {
-            final int index = i;
             executor.submit(() -> {
                 try {
                     starterLatch.await();
@@ -59,7 +58,7 @@ public class CatastropheIngestionService {
 
                     BigDecimal claimedAmount = BigDecimal.valueOf(random.nextDouble() * randomCoverage).setScale(2, RoundingMode.HALF_UP);
 
-                    InsuranceClaim claim = new InsuranceClaim(policy.getPolicyNumber(), peril.stream().findFirst().orElse(null), claimedAmount);
+                    InsuranceClaim claim = new InsuranceClaim(policy, peril.stream().findFirst().orElse(null), claimedAmount);
                     claimProducer.publishClaimSubmittedEvent(claim);
                     successfulIngestion.incrementAndGet();
                 } catch (Exception e) {

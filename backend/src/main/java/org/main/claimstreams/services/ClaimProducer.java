@@ -16,7 +16,7 @@ public class ClaimProducer {
 
     public void publishClaimSubmittedEvent(InsuranceClaim claim) {
         String jsonPayload = objectMapper.writeValueAsString(claim);
-        kafkaTemplate.send(TOPIC, claim.getPolicyNumber(), jsonPayload);
-        System.out.println("[KAFKA PRODUCER] Claim queues: " + claim.getClaimReference());
+        kafkaTemplate.send(TOPIC, claim.getPolicy().getPolicyNumber(), jsonPayload);
+        System.out.println("[KAFKA PRODUCER] Claim queues: " + claim.getClaimId());
     }
 }

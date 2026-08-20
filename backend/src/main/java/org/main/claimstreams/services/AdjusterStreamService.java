@@ -22,8 +22,8 @@ public class AdjusterStreamService {
 
             Map<String, Object> payload = Map.of(
                     "event", "PAYOUT_PROCESSED",
-                    "claimReference", claim.getClaimReference(),
-                    "policyNumber", claim.getPolicyNumber(),
+                    "claimReference", claim.getClaimId(),
+                    "policyNumber", claim.getPolicy(),
                     "amountApproved", claim.getApprovedPayoutAmount(),
                     "riskScore", claim.getRiskScore(),
                     "timestamp", System.currentTimeMillis()
@@ -32,7 +32,7 @@ public class AdjusterStreamService {
 
             messagingTemplate.convertAndSend("/topics/claims-feed", (Object) payload);
 
-            System.out.println("[WEBSOCKET BROADCAST] Real time payout streamed for: " + claim.getClaimReference());
+            System.out.println("[WEBSOCKET BROADCAST] Real time payout streamed for: " + claim.getClaimId());
 
         } catch (Exception e) {
             System.err.println("Error streaming websocket notification: " + e.getMessage());

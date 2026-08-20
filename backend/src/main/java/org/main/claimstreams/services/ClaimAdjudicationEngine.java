@@ -37,27 +37,34 @@ public class ClaimAdjudicationEngine {
         try {
             InsuranceClaim claim = objectMapper.readValue(claimJson, InsuranceClaim.class);
             InsuranceClaimStatus previousStatus = claim.getStatus();
+            String rejectionReason;
 
-            Optional<Policy> policyOpt = policyRepository.findByPolicyNumber(claim.getPolicyNumber());
+            Optional<Policy> policyOpt = policyRepository.findByPolicyNumber(claim.getPolicy().getPolicyNumber());
 
             if (policyOpt.isEmpty() || !policyOpt.get().getStatus().name().equalsIgnoreCase(PolicyStatus.ACTIVE.name())) {
-                rejectClaim(claim, previousStatus, "Policy inactive or non-existent");
+                rejectionReason = "Policy inactive or non-existent";
+                rejectClaim(claim, previousStatus, rejectionReason);
+                claim.setReason(rejectionReason);
                 return;
             }
 
             Policy policy = policyOpt.get();
 
             if (!policy.getCoveredPeril().contains(claim.getPerilType())) {
-                rejectClaim(claim, previousStatus, "Peril " + claim.getPerilType() + " not covered under policy");
+                rejectionReason = "Peril " + claim.getPerilType() + " not covered under policy";
+                rejectClaim(claim, previousStatus, rejectionReason);
+                claim.setReason(rejectionReason);
+            }
+
+            if (claim.getClaimedAmount().compareTo(policy.getMaxCoverageLimit()) > 0) {
+                rejectionReason = "Claim amount exceeds maximum policy limit";
+                rejectClaim(claim, previousStatus, rejectionReason);
+                claim.setReason(rejectionReason);
+                return;
             }
 
             int calculatedRiskScore = evaluateRiskScore(claim, policy);
             claim.setRiskScore(calculatedRiskScore);
-
-            if (claim.getClaimedAmount().compareTo(policy.getMaxCoverageLimit()) > 0) {
-                rejectClaim(claim, previousStatus, "Claim amount exceeds maximum policy limit");
-                return;
-            }
 
             if (calculatedRiskScore < 30) {
                 BigDecimal netPayout = claim.getClaimedAmount().subtract(policy.getDeductible());
@@ -66,29 +73,33 @@ public class ClaimAdjudicationEngine {
 
                 claimRepository.save(claim);
                 auditLogRepository.save(new ClaimAuditLog(
-                        claim.getClaimReference(),
+                        claim.getClaimId(),
                         previousStatus,
                         claim.getStatus(),
                         "Low risk score (" + calculatedRiskScore + "). Payout: £" + netPayout
                 ));
 
-                kafkaTemplate.send("claims-payouts", claim.getClaimReference(), objectMapper.writeValueAsString(claim));
-                System.out.println("[AUTO APPROVED] Claim " + claim.getClaimReference() + " Net Payout: £" + netPayout);
+                kafkaTemplate.send("claims-payouts", claim.getClaimId(), objectMapper.writeValueAsString(claim));
+                System.out.println("[AUTO APPROVED] Claim " + claim.getClaimId() + " Net Payout: £" + netPayout);
             } else {
                 claim.setStatus(InsuranceClaimStatus.MANUAL_REVIEW);
                 claimRepository.save(claim);
 
+                rejectionReason = "High risk score (" + calculatedRiskScore + "). Escalated to adjuster queue.";
+
                 auditLogRepository.save(new ClaimAuditLog(
-                        claim.getClaimReference(),
+                        claim.getClaimId(),
                         previousStatus,
                         claim.getStatus(),
                         "High risk score (" + calculatedRiskScore + "). Escalated to adjuster queue."
                 ));
 
-                String slaKey = "claim:sla:timer" + claim.getClaimReference();
+                claim.setReason(rejectionReason);
+
+                String slaKey = "claim:sla:timer" + claim.getClaimId();
                 redisTemplate.opsForValue().set(slaKey, claim.getStatus().toString(), Duration.ofDays(7));
 
-                System.out.println("[FLAGGED FOR REVIEW] Claim " + claim.getClaimReference() + " Risk Score: " + calculatedRiskScore);
+                System.out.println("[FLAGGED FOR REVIEW] Claim " + claim.getClaimId() + " Risk Score: " + calculatedRiskScore);
             }
 
         } catch (Exception e) {
@@ -100,7 +111,7 @@ public class ClaimAdjudicationEngine {
     private int evaluateRiskScore(InsuranceClaim claim, Policy policy) {
         int score = 0;
 
-        String velocityKey = "claims:velocity:" + claim.getPolicyNumber();
+        String velocityKey = "claims:velocity:" + claim.getPolicy();
         Long recentClaimsCount = redisTemplate.opsForValue().increment(velocityKey);
 
         if (recentClaimsCount != null && recentClaimsCount == 1) {
@@ -129,7 +140,7 @@ public class ClaimAdjudicationEngine {
         claim.setStatus(InsuranceClaimStatus.REJECTED);
         claimRepository.save(claim);
         auditLogRepository.save(new ClaimAuditLog(
-                claim.getClaimReference(),
+                claim.getClaimId(),
                 previousStatus,
                 claim.getStatus(),
                 reason

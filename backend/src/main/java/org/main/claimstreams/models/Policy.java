@@ -18,10 +18,11 @@ import java.util.UUID;
 @Table(name = "claim_policies")
 @NoArgsConstructor
 public class Policy {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
 
+    @Id
     @Column(nullable = false, unique = true, updatable = false)
     private String policyNumber;
 
@@ -37,11 +38,18 @@ public class Policy {
     @Enumerated(EnumType.STRING)
     private Set<Peril> coveredPeril = new HashSet<>();
 
+//    Category
+
+//    Sub-category
+
     @Column(nullable = false)
     private BigDecimal maxCoverageLimit;
 
     @Column(nullable = false)
     private BigDecimal deductible;
+
+    LocalDateTime effectiveDate;
+    LocalDateTime expirationDate;
 
     @Setter
     @Enumerated(EnumType.STRING)
@@ -49,12 +57,14 @@ public class Policy {
     private PolicyStatus status = PolicyStatus.ACTIVE;
 
     public Policy(String policyHolderName, String policyHolderEmailId, Set<Peril> coveredPeril, BigDecimal maxCoverageLimit, BigDecimal deductible) {
-        this.policyNumber = "POL-UK-" + LocalDateTime.now().getYear() + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        this.policyNumber = "POL-UK-" + LocalDateTime.now().getYear() + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.policyHolderName = policyHolderName;
         this.policyHolderEmailId = policyHolderEmailId;
         this.coveredPeril = coveredPeril;
         this.maxCoverageLimit = maxCoverageLimit;
         this.deductible = deductible;
+        this.effectiveDate = LocalDateTime.now();
+        this.expirationDate = LocalDateTime.now();
     }
 
 }

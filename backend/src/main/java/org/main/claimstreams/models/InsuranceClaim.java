@@ -16,15 +16,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 public class InsuranceClaim {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
 
+    @Id
     @Column(nullable = false, unique = true)
-    private String claimReference;
+    private String claimId;
 
     @Column(nullable = false)
-    private String policyNumber;
+    private Policy policy;
 
     @Column(nullable = false)
     private Peril perilType;
@@ -47,12 +48,16 @@ public class InsuranceClaim {
     @Version
     private Long version;
 
+    @Setter
+    @Column(nullable = false)
+    private String reason;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public InsuranceClaim(String policyNumber, Peril perilType, BigDecimal claimedAmount) {
-        this.claimReference = "CLM-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        this.policyNumber = policyNumber;
+    public InsuranceClaim(Policy policy, Peril perilType, BigDecimal claimedAmount) {
+        this.claimId = "CLM-" + LocalDateTime.now().getYear() + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        this.policy = policy;
         this.perilType = perilType;
         this.claimedAmount = claimedAmount;
         this.status = InsuranceClaimStatus.SUBMITTED;

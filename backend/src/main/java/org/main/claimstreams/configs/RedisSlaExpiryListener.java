@@ -41,7 +41,7 @@ public class RedisSlaExpiryListener implements MessageListener {
                     claimRepository.save(claim);
 
                     auditLogRepository.save(new ClaimAuditLog(
-                            claim.getClaimReference(),
+                            claim.getClaimId(),
                             previousStatus,
                             claim.getStatus(),
                             "Statutory 7 day manual review SLA expired without adjuster resolution"
