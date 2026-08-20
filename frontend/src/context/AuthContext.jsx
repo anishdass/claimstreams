@@ -8,13 +8,15 @@ export function AuthProvider({ children }) {
 
   const login = (email, password) => {
     if (email && password) {
-      const dummyUser = getDummyUser();
-      setUser(dummyUser);
+      const user = getDummyUser();
+      setUser(user);
+      localStorage.setItem("authToken", user.token);
     }
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem("authToken");
   };
 
   return (

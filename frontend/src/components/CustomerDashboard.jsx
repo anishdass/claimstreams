@@ -32,12 +32,9 @@ export default function CustomerDashboard({ user }) {
 
   return (
     <div className='min-h-screen bg-slate-950 text-slate-100 font-sans p-6'>
-      {/* Portal Top Header */}
       <CustomerTopbar user={user} />
 
-      {/* Main Grid: Side-by-Side Split Column Workspace */}
       <div className='grid grid-cols-12 gap-6'>
-        {/* Left Column: Claims List */}
         <div className='col-span-7'>
           <CustomerClaimsList
             claims={user?.claims}
@@ -48,7 +45,6 @@ export default function CustomerDashboard({ user }) {
           />
         </div>
 
-        {/* Right Column: Claim Details Workspace */}
         <div className='col-span-5'>
           <CustomerClaimDetails
             selectedClaim={selectedClaim}

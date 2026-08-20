@@ -1,7 +1,7 @@
 export const getDummyUser = () => {
   const userData = {
     fullName: "Anish",
-    role: "ADJUSTER",
+    role: "CUSTOMER",
     policy: [
       {
         policyNumber: "POL-2026-12345678",
