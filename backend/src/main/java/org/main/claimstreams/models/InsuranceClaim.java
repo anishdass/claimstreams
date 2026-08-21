@@ -16,15 +16,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 public class InsuranceClaim {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-
     @Id
     @Column(nullable = false, unique = true)
     private String claimId;
 
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "policy_number", referencedColumnName = "policy_number", nullable = false)
     private Policy policy;
 
     @Column(nullable = false)

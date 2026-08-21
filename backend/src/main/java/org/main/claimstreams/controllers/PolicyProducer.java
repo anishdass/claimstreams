@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.main.claimstreams.models.Policy;
 import org.main.claimstreams.models.User;
 import org.main.claimstreams.models.enums.Peril;
+import org.main.claimstreams.models.enums.PolicyCategory;
+import org.main.claimstreams.models.enums.PolicySubcategory;
 import org.main.claimstreams.models.enums.UserRole;
 import org.main.claimstreams.repositories.PolicyRepository;
 import org.main.claimstreams.repositories.UserRepository;
@@ -12,12 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/policy")
+@RequestMapping("/api/v1/policies")
 @RequiredArgsConstructor
 public class PolicyProducer {
 
@@ -50,7 +54,7 @@ public class PolicyProducer {
         );
         policyRepository.save(policy);
 
-        user.setPolicyNumber(policy.getPolicyNumber());
+        user.setPolicies(policy);
 
         userRepository.save(user);
 
@@ -60,5 +64,14 @@ public class PolicyProducer {
                         "status", "SUCCESS",
                         "message", "Policy created"
                 ));
+    }
+
+    @PostMapping("/categories/{category}/subcategories")
+    public ResponseEntity<List<PolicySubcategory>> getSubcategoriesByCategory(@PathVariable PolicyCategory category) {
+        List<PolicySubcategory> subcategories = PolicySubcategory.getByCategory(category)
+                .stream()
+                .toList();
+
+        return ResponseEntity.ok(subcategories);
     }
 }
