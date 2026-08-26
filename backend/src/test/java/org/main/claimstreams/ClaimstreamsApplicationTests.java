@@ -2,7 +2,7 @@ package org.main.claimstreams;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.main.claimstreams.models.enums.Peril;
+import org.main.claimstreams.models.enums.Perils;
 import org.main.claimstreams.repositories.ClaimAuditLogRepository;
 import org.main.claimstreams.repositories.PolicyRepository;
 import org.main.claimstreams.repositories.InsuranceClaimRepository;
@@ -76,10 +76,10 @@ class ClaimstreamsApplicationTests {
         policyRepository.deleteAll();
         auditLogRepository.deleteAll();
 
-        Set<Peril> perils = new HashSet<>();
-        perils.add(Peril.FLOOD);
-        perils.add(Peril.FIRE);
-        perils.add(Peril.STORM);
+        Set<Perils> perils = new HashSet<>();
+        perils.add(Perils.FLOOD);
+        perils.add(Perils.FIRE);
+        perils.add(Perils.STORM);
 
 
         activePolicy = new Policy(
@@ -96,14 +96,14 @@ class ClaimstreamsApplicationTests {
     void testEndToEndAutoApproval() {
         InsuranceClaim claim = new InsuranceClaim(
                 activePolicy,
-                Peril.FLOOD,
+                Perils.FLOOD,
                 new BigDecimal("1500.00")
         );
 
         claimProducer.publishClaimSubmittedEvent(claim);
 
         await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
-            var foundClaim = claimRepository.findByClaimReference("CLM-TEST-8888");
+            var foundClaim = claimRepository.findByClaimId("CLM-TEST-8888");
             assertTrue(foundClaim.isPresent());
             assertEquals("AUTO_APPROVED", foundClaim.get().getStatus().name());
             assertEquals(new BigDecimal("1250.00"), foundClaim.get().getApprovedPayoutAmount());

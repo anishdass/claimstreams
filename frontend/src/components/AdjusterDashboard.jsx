@@ -1,21 +1,43 @@
-import { useState } from "react";
-import { getInitialClaims } from "../data/mockClaims";
+import { useEffect, useState } from "react";
 import Topbar from "./AdjusterDashboard/Topbar";
 import MetricCard from "./AdjusterDashboard/MetricCard";
 import ClaimsTable from "./AdjusterDashboard/ClaimsTable";
 import ClaimDetails from "./AdjusterDashboard/ClaimDetails";
 import renderStatusBadge from "./StatusBadge";
+import { getAllClaims } from "../assets/services/apiCalls";
 
 export default function AdjusterDashboard() {
-  const [claims, setClaims] = useState(getInitialClaims());
-  const [selectedClaim, setSelectedClaim] = useState(getInitialClaims()[0]);
+  const [selectedClaim, setSelectedClaim] = useState();
+  const [claims, setClaims] = useState([]);
+
+  useEffect(() => {
+    const fetchClaims = async () => {
+      try {
+        const res = await getAllClaims();
+        setClaims(res.data);
+      } catch (error) {
+        console.error("Failed to fetch claims:", error);
+      }
+    };
+
+    fetchClaims();
+  }, []);
+
+  // Render nothing or a loading message while fetching
+  if (!claims.length && !selectedClaim) {
+    return (
+      <div className='min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center'>
+        <p>Loading claims data...</p>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen bg-slate-950 text-slate-100 font-sans p-6'>
-      {/* Top Header & Context Banner */}
+      {/* Header */}
       <Topbar setClaims={setClaims} setSelectedClaim={setSelectedClaim} />
 
-      {/* Real-time Telemetry Metrics Bar */}
+      {/* Metrics Bar */}
       <MetricCard claims={claims} />
 
       {/* Workspace Grid */}

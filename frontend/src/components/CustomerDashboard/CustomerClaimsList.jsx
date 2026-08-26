@@ -20,7 +20,7 @@ export function CustomerClaimsList({
         </button>
       </div>
       <div className='space-y-3'>
-        {claims?.length > 0 ? (
+        {claims?.length ? (
           claims.map((claim) => {
             const isSelected = selectedClaim?.claimId === claim.claimId;
             return (
@@ -47,11 +47,11 @@ export function CustomerClaimsList({
                 <div className='mt-2 flex justify-between items-end text-xs'>
                   <div>
                     <p className='text-slate-500 text-[11px] font-mono mt-0.5'>
-                      Filed: {claim.createdAt}
+                      Filed: {claim.createdAt.split("T")[0]}
                     </p>
                   </div>
                   <p className='font-mono text-slate-200 font-semibold text-sm'>
-                    ${claim.claimedAmount?.toFixed(2)}
+                    £{claim.claimedAmount?.toFixed(2)}
                   </p>
                 </div>
               </div>

@@ -2,7 +2,7 @@ package org.main.claimstreams.services;
 
 import lombok.RequiredArgsConstructor;
 import org.main.claimstreams.models.Policy;
-import org.main.claimstreams.models.enums.Peril;
+import org.main.claimstreams.models.enums.Perils;
 import org.main.claimstreams.models.InsuranceClaim;
 import org.main.claimstreams.repositories.PolicyRepository;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class CatastropheIngestionService {
     private final ClaimProducer claimProducer;
     private final PolicyRepository policyRepository;
     private final Random random = new Random();
-    private final Peril[] perils = {Peril.FLOOD, Peril.STORM, Peril.FIRE, Peril.ESCAPE_OF_WATER};
+    private final Perils[] perils = {Perils.FLOOD, Perils.STORM, Perils.FIRE, Perils.ESCAPE_OF_WATER};
 
     public int simulatePeril(int totalClaims) {
         ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
@@ -36,7 +36,7 @@ public class CatastropheIngestionService {
                 try {
                     starterLatch.await();
 
-                    Set<Peril> peril = new HashSet<>();
+                    Set<Perils> peril = new HashSet<>();
                     peril.add(perils[random.nextInt(perils.length)]);
 
                     double randomCoverage = 10000 + (random.nextInt(10) * 10000);

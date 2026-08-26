@@ -27,10 +27,10 @@ public class RedisSlaExpiryListener implements MessageListener {
         String expiredKey = message.toString();
 
         if (expiredKey.startsWith("claim:sla:timer")) {
-            String claimReference = expiredKey.replace("claim:sla:timer", "");
-            System.err.println("[SLA BREACH DETECTED] Timer expired for claim: " + claimReference);
+            String claimId = expiredKey.replace("claim:sla:timer", "");
+            System.err.println("[SLA BREACH DETECTED] Timer expired for claim: " + claimId);
 
-            Optional<InsuranceClaim> claimOptional = claimRepository.findByClaimReference(claimReference);
+            Optional<InsuranceClaim> claimOptional = claimRepository.findByClaimId(claimId);
 
             if (claimOptional.isPresent()) {
                 InsuranceClaim claim = claimOptional.get();
@@ -47,7 +47,7 @@ public class RedisSlaExpiryListener implements MessageListener {
                             "Statutory 7 day manual review SLA expired without adjuster resolution"
                     ));
 
-                    System.out.println("[Escalated] Claim " + claimReference + " escalated to senior review queue due to SLA breach.");
+                    System.out.println("[Escalated] Claim " + claimId + " escalated to senior review queue due to SLA breach.");
 
                 }
             }

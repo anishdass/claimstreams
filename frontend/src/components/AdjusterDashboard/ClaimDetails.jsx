@@ -1,5 +1,10 @@
 import { useState } from "react";
 import PolicyDetailsModal from "../PolicyDetailsModal";
+import {
+  getAllClaims,
+  updateStatusClaim,
+} from "../../assets/services/apiCalls";
+import { toast } from "react-toastify";
 
 const ClaimDetails = ({
   setClaims,
@@ -17,38 +22,26 @@ const ClaimDetails = ({
     setActiveModalClaim(null);
   };
 
-  const handleApprove = (claimId) => {
-    setClaims((prev) =>
-      prev.map((c) => {
-        if (c.id === claimId) {
-          const payout = c.claimedAmount - c.deductible;
-          const updated = {
-            ...c,
-            status: "SENIOR_APPROVED",
-            payout: payout > 0 ? payout : 0,
-          };
-          setSelectedClaim(updated);
-          return updated;
-        }
-        return c;
-      })
-    );
+  const handleStatusUpdate = async (claimId, status) => {
+    try {
+      const response = await updateStatusClaim(claimId, status);
+      toast.success(response?.data?.message);
+      const res = await getAllClaims();
+      const updatedClaims = res.data;
+      setClaims(updatedClaims);
+      const updatedClaim = updatedClaims.find(
+        (claim) => claim.claimId == claimId
+      );
+      setSelectedClaim(updatedClaim);
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          "Unable to the update status of the claim"
+      );
+    }
   };
 
-  const handleReject = (claimId) => {
-    setClaims((prev) =>
-      prev.map((c) => {
-        if (c.id === claimId) {
-          const updated = { ...c, status: "REJECTED", payout: 0 };
-          setSelectedClaim(updated);
-          return updated;
-        }
-        return c;
-      })
-    );
-  };
-
-  return (
+  return selectedClaim ? (
     <div className='col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between'>
       <div>
         <div className='border-b border-slate-800 pb-3 mb-4 flex justify-between items-center'>
@@ -123,9 +116,8 @@ const ClaimDetails = ({
               <span className='text-slate-300'>Net Calculated Payout:</span>
               <span className='font-mono text-indigo-400'>
                 £
-                {selectedClaim.approvedPayoutAmount.toFixed(2) ||
-                  selectedClaim.claimedAmount.toFixed(2) -
-                    selectedClaim.policy.deductible.toFixed(2)}
+                {selectedClaim.claimedAmount.toFixed(2) -
+                  selectedClaim.policy.deductible.toFixed(2)}
               </span>
             </div>
           </div>
@@ -139,19 +131,23 @@ const ClaimDetails = ({
         </h4>
         <div className='flex gap-3'>
           <button
-            onClick={() => handleApprove(selectedClaim.id)}
+            onClick={() =>
+              handleStatusUpdate(selectedClaim.claimId, "APPROVED")
+            }
             disabled={
               selectedClaim.status === "AUTO_APPROVED" ||
-              selectedClaim.status === "SENIOR_APPROVED"
+              selectedClaim.status === "APPROVED"
             }
             className='flex-1 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:hover:bg-emerald-600 text-white text-xs font-semibold py-2.5 rounded-lg transition-all'>
-            Manual Approve
+            Approve
           </button>
           <button
-            onClick={() => handleReject(selectedClaim.id)}
+            onClick={() =>
+              handleStatusUpdate(selectedClaim.claimId, "REJECTED")
+            }
             disabled={selectedClaim.status === "REJECTED"}
             className='flex-1 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:hover:bg-rose-600 text-white text-xs font-semibold py-2.5 rounded-lg transition-all'>
-            Reject Claim
+            Reject
           </button>
         </div>
       </div>
@@ -159,6 +155,19 @@ const ClaimDetails = ({
       {activeModalClaim && (
         <PolicyDetailsModal claim={selectedClaim} onClose={hanleCloseModal} />
       )}
+    </div>
+  ) : (
+    <div className='col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col items-center justify-center text-center min-h-[400px]'>
+      <div className='w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mb-3 text-slate-500'>
+        📋
+      </div>
+      <h3 className='text-sm font-semibold text-slate-300'>
+        No Claim Selected
+      </h3>
+      <p className='text-xs text-slate-500 mt-1 max-w-[250px]'>
+        Select a claim from the inspection queue table to review policy details
+        and financial calculations.
+      </p>
     </div>
   );
 };

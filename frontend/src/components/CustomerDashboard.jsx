@@ -48,7 +48,6 @@ export default function CustomerDashboard({ user }) {
         <div className='col-span-5'>
           <CustomerClaimDetails
             selectedClaim={selectedClaim}
-            renderStatusBadge={renderStatusBadge}
           />
         </div>
       </div>
@@ -56,7 +55,6 @@ export default function CustomerDashboard({ user }) {
         isOpen={isClaimModalOpen}
         onClose={() => setIsClaimModalOpen(false)}
         policies={userPolicies}
-        onSubmitClaim={handleClaimSubmit}
       />
     </div>
   );

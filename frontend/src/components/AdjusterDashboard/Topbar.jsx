@@ -1,9 +1,15 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import LogoutButton from "../CommonComponents/LogoutButton";
+import { Plus, UserPlus } from "lucide-react";
+import CreatePolicyModal from "../CreatePolicyModal";
+import RegisterModal from "../RegisterModal";
 
 const Topbar = ({ setClaims, setSelectedClaim }) => {
   const [isSimulating, setIsSimulating] = useState(false);
-  const { logout } = useAuth();
+  const [openCreatePolicyModal, setOpenCreatePolicyModal] = useState(false);
+  const [openRegisterModal, setOpenRegisterModal] = useState(false);
+  const { logout, user } = useAuth();
 
   const triggerSimulatedClaim = () => {
     setIsSimulating(true);
@@ -57,10 +63,17 @@ const Topbar = ({ setClaims, setSelectedClaim }) => {
     }, 600);
   };
 
+  const onPolicyModalClose = () => {
+    setOpenCreatePolicyModal(false);
+  };
+
+  const onRegisterModalClose = () => {
+    setOpenRegisterModal(false);
+  };
+
   return (
     <header className='mb-8'>
       <div className='flex flex-col gap-5 rounded-2xl border border-slate-800 bg-slate-950/70 px-6 py-5 shadow-xl shadow-black/10 backdrop-blur-xl md:flex-row md:items-center md:justify-between'>
-        {/* Brand */}
         <div className='flex items-center gap-4'>
           {/* Logo */}
           <div className='relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/20'>
@@ -91,9 +104,7 @@ const Topbar = ({ setClaims, setSelectedClaim }) => {
           </div>
         </div>
 
-        {/* Right side */}
         <div className='flex items-center gap-4'>
-          {/* Kafka Status Pill */}
           <div className='hidden items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/70 px-3 py-2 md:flex'>
             <span className='h-2 w-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400'></span>
 
@@ -107,38 +118,10 @@ const Topbar = ({ setClaims, setSelectedClaim }) => {
             </div>
           </div>
 
-          {/* Primary Action: Simulate Claim Button */}
           <button
             onClick={triggerSimulatedClaim}
             disabled={isSimulating}
-            className='
-      group
-      relative
-      flex
-      items-center
-      gap-2.5
-      overflow-hidden
-      rounded-xl
-      bg-gradient-to-r
-      from-indigo-600
-      to-violet-600
-      px-4
-      py-2.5
-      text-xs
-      font-semibold
-      text-white
-      shadow-lg
-      shadow-indigo-600/20
-      transition-all
-      duration-200
-      hover:-translate-y-0.5
-      hover:from-indigo-500
-      hover:to-violet-500
-      hover:shadow-indigo-500/30
-      disabled:cursor-not-allowed
-      disabled:opacity-60
-      disabled:hover:translate-y-0
-    '>
+            className='group relative flex items-center gap-2.5 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0'>
             {/* Shine effect */}
             <span className='absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full' />
 
@@ -151,31 +134,44 @@ const Topbar = ({ setClaims, setSelectedClaim }) => {
             </span>
           </button>
 
-          {/* Visual Section Divider */}
           <div className='h-6 w-[1px] bg-slate-800' />
 
-          {/* Session Control: Aesthetic Logout Button */}
-          <button
-            type='button'
-            onClick={logout}
-            className='group flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/70 px-3.5 py-2.5 text-xs font-medium text-slate-400 transition-all duration-200 hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-400 active:scale-95 cursor-pointer'>
-            <span>Logout</span>
-          </button>
+          <LogoutButton logout={logout} />
         </div>
       </div>
 
-      {/* Bottom status bar */}
       <div className='mt-3 flex items-center justify-between px-1 text-[11px] text-slate-500'>
         <div className='flex items-center gap-2'>
           <span className='text-slate-600'>SYSTEM</span>
           <span className='text-slate-700'>•</span>
           <span>Real-time event processing enabled</span>
         </div>
-
-        <div className='hidden sm:block'>
-          <span className='text-slate-600'>ENV</span>{" "}
-          <span className='font-medium text-slate-400'>DEVELOPMENT</span>
+        <div className='flex items-center gap-2.5'>
+          <button
+            type='button'
+            onClick={() => setOpenCreatePolicyModal(true)}
+            className='inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-all cursor-pointer shadow-sm shadow-indigo-500/20 hover:shadow-indigo-500/40 active:scale-95'>
+            <Plus className='w-4 h-4' />
+            <span>Create Policy</span>
+          </button>
+          {user.role == "ROLE_SENIOR_ADJUSTER" && (
+            <button
+              type='button'
+              onClick={() => setOpenRegisterModal(true)}
+              className='inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 hover:border-slate-600 text-xs font-semibold px-3 py-2 rounded-lg transition-all cursor-pointer shadow-sm active:scale-95'>
+              <UserPlus className='w-4 h-4 text-slate-400' />
+              <span>Register</span>
+            </button>
+          )}
         </div>
+        <CreatePolicyModal
+          isOpen={openCreatePolicyModal}
+          onClose={onPolicyModalClose}
+        />
+        <RegisterModal
+          isOpen={openRegisterModal}
+          onClose={onRegisterModalClose}
+        />
       </div>
     </header>
   );

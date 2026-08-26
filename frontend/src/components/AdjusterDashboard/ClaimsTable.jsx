@@ -1,3 +1,4 @@
+import { Calendar, FileText, User } from "lucide-react";
 import { useState } from "react";
 
 const ClaimsTable = ({
@@ -10,12 +11,6 @@ const ClaimsTable = ({
 
   const filteredClaims = claims.filter((c) => {
     if (filter === "ALL") return true;
-    if (filter === "PENDING")
-      return (
-        c.status === "MANUAL_REVIEW" ||
-        c.status === "HIGH_VALUE_AUDIT" ||
-        c.status === "SLA_BREACH_ESCALATED"
-      );
     return c.status === filter;
   });
 
@@ -26,7 +21,7 @@ const ClaimsTable = ({
           Live Claim Stream
         </h3>
         <div className='flex gap-2'>
-          {["ALL", "PENDING", "AUTO_APPROVED"].map((f) => (
+          {["ALL", "MANUAL_REVIEW", "SUBMITTED"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -35,7 +30,7 @@ const ClaimsTable = ({
                   ? "bg-slate-800 border-indigo-500 text-indigo-400"
                   : "border-slate-800 text-slate-400 hover:border-slate-700"
               }`}>
-              {f === "PENDING" ? "Requires Action" : f.replace("_", " ")}
+              {f.replace("_", " ")}
             </button>
           ))}
         </div>
@@ -53,18 +48,30 @@ const ClaimsTable = ({
             }`}>
             <div className='flex justify-between items-start'>
               <div>
-                <div className='flex items-center gap-2'>
-                  <span className='font-mono text-xs text-indigo-400 font-bold'>
-                    {claim.claimId}
-                  </span>
-                  <span className='text-xs text-slate-500'>•</span>
-                  <span className='text-xs text-slate-400 font-medium'>
-                    {claim.claimant}
-                  </span>
+                {/* Claim Identifier & Policyholder Info */}
+                <div className='flex items-center gap-2 mb-1'>
+                  <div className='flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-md'>
+                    <FileText className='w-3 h-3 text-indigo-400' />
+                    <span className='font-mono text-xs text-indigo-300 font-bold tracking-tight'>
+                      {claim?.claimId}
+                    </span>
+                  </div>
+
+                  <div className='flex items-center gap-1 text-slate-300 text-xs font-medium'>
+                    <User className='w-3 h-3 text-slate-500' />
+                    <span>
+                      {claim?.user?.fullName || "Unknown Policyholder"}
+                    </span>
+                  </div>
                 </div>
-                <p className='text-xs text-slate-400 mt-1 line-clamp-1'>
-                  {claim.policy.policyHolderName}
-                </p>
+
+                {/* Ingestion Date */}
+                <div className='flex items-center gap-1.5 text-xs text-slate-400 pl-0.5'>
+                  <Calendar className='w-3 h-3 text-slate-500' />
+                  <time className='font-mono text-[11px] text-slate-400'>
+                    {claim?.createdAt ? claim.createdAt.split("T")[0] : "N/A"}
+                  </time>
+                </div>
               </div>
               <div className='text-right'>
                 <p className='text-sm font-mono font-semibold text-slate-200'>

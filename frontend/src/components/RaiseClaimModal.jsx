@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { raiseNewClaim } from "../assets/services/apiCalls";
 
-const RaiseClaimModal = ({ isOpen, onClose, policies, onSubmitClaim }) => {
+const RaiseClaimModal = ({ isOpen, onClose, policies }) => {
   const [selectedPolicyId, setSelectedPolicyId] = useState(
     policies?.[0]?.policyNumber || ""
   );
@@ -13,22 +14,21 @@ const RaiseClaimModal = ({ isOpen, onClose, policies, onSubmitClaim }) => {
   const activePolicy = policies?.find(
     (p) => p.policyNumber === selectedPolicyId
   );
-  const availablePerils = activePolicy?.coveredPerils || [];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedPolicyId || !selectedPeril || !claimedAmount) return;
 
-    onSubmitClaim({
-      policyId: selectedPolicyId,
-      perilType: selectedPeril,
-      claimedAmount: parseFloat(claimedAmount),
-    });
+    const response = await raiseNewClaim(
+      selectedPolicyId,
+      selectedPeril,
+      claimedAmount
+    );
+
+    console.log(response);
 
     onClose();
   };
-
-  console.log(policies[0].policyNumber);
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4'>
@@ -82,12 +82,40 @@ const RaiseClaimModal = ({ isOpen, onClose, policies, onSubmitClaim }) => {
               <option value='' disabled>
                 Select Peril Type
               </option>
-              {availablePerils.map((peril, idx) => (
+              {activePolicy.coveredPeril.map((peril, idx) => (
                 <option key={idx} value={peril}>
                   {peril}
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className='grid grid-cols-2 gap-4'>
+            {/* Coverage Limit */}
+            <div>
+              <label className='block text-xs font-medium text-slate-400 mb-1'>
+                Coverage Limit (£)
+              </label>
+              <input
+                type='text'
+                value={activePolicy.maxCoverageLimit}
+                readOnly
+                className='w-full rounded-xl bg-slate-900 border border-slate-800 p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 transition-all'
+              />
+            </div>
+
+            {/* Deductible */}
+            <div>
+              <label className='block text-xs font-medium text-slate-400 mb-1'>
+                Deductible (£)
+              </label>
+              <input
+                type='text'
+                value={activePolicy.deductible}
+                readOnly
+                className='w-full rounded-xl bg-slate-900 border border-slate-800 p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 transition-all'
+              />
+            </div>
           </div>
 
           {/* Claimed Amount Input */}
@@ -96,7 +124,7 @@ const RaiseClaimModal = ({ isOpen, onClose, policies, onSubmitClaim }) => {
               Claimed Amount (£)
             </label>
             <input
-              type='number'
+              type='text'
               step='0.01'
               value={claimedAmount}
               onChange={(e) => setClaimedAmount(e.target.value)}

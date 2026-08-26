@@ -1,18 +1,18 @@
-const MetricCard = ({claims}) => {
-  // Real-time metric computations
+const MetricCard = ({ claims }) => {
   const totalSubmitted = claims.length;
+
   const autoApprovedCount = claims.filter(
     (c) => c.status === "AUTO_APPROVED"
   ).length;
+
   const stpRate = totalSubmitted
     ? ((autoApprovedCount / totalSubmitted) * 100).toFixed(1)
     : 0;
+
   const pendingManualCount = claims.filter(
-    (c) =>
-      c.status === "MANUAL_REVIEW" ||
-      c.status === "HIGH_VALUE_AUDIT" ||
-      c.status === "SLA_BREACH_ESCALATED"
+    (c) => c.status === "MANUAL_REVIEW" || c.status === "SUBMITTED"
   ).length;
+
   const totalPayout = claims.reduce((acc, curr) => acc + (curr.payout || 0), 0);
 
   return (

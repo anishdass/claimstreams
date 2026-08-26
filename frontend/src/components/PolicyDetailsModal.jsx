@@ -1,10 +1,5 @@
-// Coverage limit     Deductible
-// Category Subcategory
-// effective date expiration date
-// Covered Peril  Status
-
 export function PolicyDetailsModal({ claim, onClose }) {
-  console.log(claim.policy.coveredPerils);
+  console.log(claim);
 
   return (
     /* Modal Backdrop Overlay */
@@ -44,21 +39,9 @@ export function PolicyDetailsModal({ claim, onClose }) {
             </p>
           </div>
           <div>
-            <p className='text-slate-400 text-xs'>Category</p>
-            <p className='font-mono text-xs text-slate-300'>
-              {claim.policy.category}
-            </p>
-          </div>
-          <div>
-            <p className='text-slate-400 text-xs'>Sub-Category</p>
-            <p className='font-mono text-xs text-slate-300'>
-              {claim.policy.subCategory}
-            </p>
-          </div>
-          <div>
             <p className='text-slate-400 text-xs'>Effective date</p>
             <p className='font-mono text-xs text-slate-300'>
-              {claim.policy.effectiveDate}
+              {claim.policy.effectiveDate.split('T')[0]}
             </p>
           </div>
           <div>
@@ -69,13 +52,13 @@ export function PolicyDetailsModal({ claim, onClose }) {
                   ? "text-red-400"
                   : "text-slate-300"
               }`}>
-              {claim.policy.expirationDate}
+              {claim.policy.expirationDate.split('T')[0]}
             </p>
           </div>
           <div>
             <p className='text-slate-400 text-xs'>Covered Peril</p>
             <p className='font-mono text-xs text-slate-300'>
-              {claim.policy.coveredPerils.map((peril, index) => (
+              {claim.policy.coveredPeril.map((peril, index) => (
                 <span key={index} className='inline-flex items-center gap-2'>
                   {index >= 0 && (
                     <span className='text-slate-50 leading-none'> </span>

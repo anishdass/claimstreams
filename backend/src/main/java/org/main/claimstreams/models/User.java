@@ -7,15 +7,17 @@ import lombok.Setter;
 import org.main.claimstreams.models.enums.UserRole;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
 @Getter
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -31,15 +33,11 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "policies_policy_number")
-    private Policy policies;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Policy> policies = new ArrayList<>();
 
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "claims_claim_id")
-    private InsuranceClaim claims;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InsuranceClaim> claims = new ArrayList<>();
 
     public User(String email,
                 String password,
@@ -50,5 +48,15 @@ public class User {
         this.password = password;
         this.fullName = fullName;
         this.role = role;
+    }
+
+    public void addClaim(InsuranceClaim claim) {
+        claims.add(claim);
+        claim.setUser(this);
+    }
+
+    public void addPolicy(Policy policy) {
+        policies.add(policy);
+        policy.setUser(this);
     }
 }

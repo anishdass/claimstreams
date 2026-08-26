@@ -1,16 +1,20 @@
 package org.main.claimstreams.repositories;
 
+import org.main.claimstreams.models.User;
 import org.main.claimstreams.models.enums.InsuranceClaimStatus;
 import org.main.claimstreams.models.InsuranceClaim;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface InsuranceClaimRepository extends JpaRepository<InsuranceClaim, String> {
-    Optional<InsuranceClaim> findByClaimReference(String claimReference);
+    Optional<InsuranceClaim> findByClaimId(String claimReference);
 
-    List<InsuranceClaim> findByStatus(InsuranceClaimStatus status);
+    Optional<List<InsuranceClaim>> findByUser(User user);
+
+    List<InsuranceClaim> findByStatusIn(Collection<InsuranceClaimStatus> statuses);
 }

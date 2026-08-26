@@ -15,13 +15,12 @@ import java.util.Map;
 public class JwtUtils {
     private final SecretKey key = Keys.hmacShaKeyFor("ClaimStreamSecretKeyForEnterpriseSecurityRbac2026!".getBytes());
 
-    public String generateToken(String email, UserRole role, String policyNumber) {
+    public String generateToken(String email, UserRole role) {
 
         Map<String, String> claimsMap = new HashMap<>();
         claimsMap.put("role", role.name());
-        claimsMap.put("policyNumber", policyNumber);
 
-        long jwtExpirationMs = 8640000;
+        long jwtExpirationMs = 86400000;
         return Jwts.builder()
                 .subject(email)
                 .claims(claimsMap)
