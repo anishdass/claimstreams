@@ -66,7 +66,7 @@ public class ClaimAdjudicationEngine {
             int calculatedRiskScore = evaluateRiskScore(claim, policy);
             claim.setRiskScore(calculatedRiskScore);
 
-            if (calculatedRiskScore < 30) {
+            if (calculatedRiskScore < 15) {
                 BigDecimal netPayout = claim.getClaimedAmount().subtract(policy.getDeductible());
                 claim.setApprovedPayoutAmount(netPayout.max(BigDecimal.ZERO));
                 claim.setStatus(InsuranceClaimStatus.AUTO_APPROVED);
@@ -111,7 +111,7 @@ public class ClaimAdjudicationEngine {
     private int evaluateRiskScore(InsuranceClaim claim, Policy policy) {
         int score = 0;
 
-        String velocityKey = "claims:velocity:" + claim.getPolicy();
+        String velocityKey = "claims:velocity:" + claim.getPolicy().getPolicyNumber();
         Long recentClaimsCount = redisTemplate.opsForValue().increment(velocityKey);
 
         if (recentClaimsCount != null && recentClaimsCount == 1) {

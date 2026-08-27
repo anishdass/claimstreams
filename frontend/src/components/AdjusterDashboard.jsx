@@ -14,7 +14,7 @@ export default function AdjusterDashboard() {
     const fetchClaims = async () => {
       try {
         const res = await getAllClaims();
-        setClaims(res.data);
+        setClaims(res?.data||[]);
       } catch (error) {
         console.error("Failed to fetch claims:", error);
       }
@@ -24,13 +24,13 @@ export default function AdjusterDashboard() {
   }, []);
 
   // Render nothing or a loading message while fetching
-  if (!claims.length && !selectedClaim) {
-    return (
-      <div className='min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center'>
-        <p>Loading claims data...</p>
-      </div>
-    );
-  }
+  // if (!claims.length && !selectedClaim) {
+  //   return (
+  //     <div className='min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center'>
+  //       <p>Loading claims data...</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className='min-h-screen bg-slate-950 text-slate-100 font-sans p-6'>

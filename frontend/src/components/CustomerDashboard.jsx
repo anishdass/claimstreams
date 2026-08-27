@@ -8,27 +8,12 @@ import { CustomerClaimDetails } from "./CustomerDashboard/CustomerClaimDetails";
 export default function CustomerDashboard({ user }) {
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
-  const [claimsList, setClaimsList] = useState(user?.claims || []);
 
   const userPolicies = user?.policy
     ? Array.isArray(user.policy)
       ? user.policy
       : [user.policy]
     : [];
-
-  const handleClaimSubmit = (newClaimData) => {
-    const newClaim = {
-      id: `CLM-${Math.floor(1000 + Math.random() * 9000)}`,
-      claimedAmount: newClaimData.claimedAmount,
-      payout: null,
-      status: "SUBMITTED",
-      incidentDate: new Date().toISOString().split("T")[0],
-      category: newClaimData.perilType,
-    };
-
-    setClaimsList((prev) => [newClaim, ...prev]);
-    setSelectedClaim(newClaim);
-  };
 
   return (
     <div className='min-h-screen bg-slate-950 text-slate-100 font-sans p-6'>

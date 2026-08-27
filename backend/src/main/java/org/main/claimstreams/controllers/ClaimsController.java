@@ -72,7 +72,7 @@ public class ClaimsController {
 
     @PostMapping("/simulate-peril")
     public ResponseEntity<Map<String, Object>> triggerCatastropheStorm(
-            @RequestParam(defaultValue = "1000") int claimCount
+            @RequestParam int claimCount
     ) {
         int processedCount = loadSimulator.simulatePeril(claimCount);
 

@@ -4,10 +4,12 @@ import LogoutButton from "../CommonComponents/LogoutButton";
 import { Plus, UserPlus } from "lucide-react";
 import CreatePolicyModal from "../CreatePolicyModal";
 import RegisterModal from "../RegisterModal";
+import SimulatePerilModal from "../SimulatePerilModal";
 
 const Topbar = ({ setClaims, setSelectedClaim }) => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [openCreatePolicyModal, setOpenCreatePolicyModal] = useState(false);
+  const [openSimulationModal, setOpenSimulationModal] = useState(false);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
   const { logout, user } = useAuth();
 
@@ -71,6 +73,10 @@ const Topbar = ({ setClaims, setSelectedClaim }) => {
     setOpenRegisterModal(false);
   };
 
+  const onSimulatePerilModalClose = () => {
+    setOpenSimulationModal(false);
+  };
+
   return (
     <header className='mb-8'>
       <div className='flex flex-col gap-5 rounded-2xl border border-slate-800 bg-slate-950/70 px-6 py-5 shadow-xl shadow-black/10 backdrop-blur-xl md:flex-row md:items-center md:justify-between'>
@@ -119,7 +125,7 @@ const Topbar = ({ setClaims, setSelectedClaim }) => {
           </div>
 
           <button
-            onClick={triggerSimulatedClaim}
+            onClick={() => setOpenSimulationModal(true)}
             disabled={isSimulating}
             className='group relative flex items-center gap-2.5 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0'>
             {/* Shine effect */}
@@ -171,6 +177,11 @@ const Topbar = ({ setClaims, setSelectedClaim }) => {
         <RegisterModal
           isOpen={openRegisterModal}
           onClose={onRegisterModalClose}
+        />
+        <SimulatePerilModal
+          isOpen={openSimulationModal}
+          onClose={onSimulatePerilModalClose}
+          setClaims={setClaims}
         />
       </div>
     </header>

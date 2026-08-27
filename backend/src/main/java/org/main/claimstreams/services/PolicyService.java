@@ -1,5 +1,6 @@
 package org.main.claimstreams.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.main.claimstreams.dtos.PolicyRequestDto;
 import org.main.claimstreams.dtos.PolicyResponseDto;
@@ -26,22 +27,23 @@ public class PolicyService {
     private final UserRepository userRepository;
     private final PolicyRepository policyRepository;
 
-    public ResponseEntity<?> createPolicy(PolicyRequestDto request) {
-        User user = userRepository.findByEmail(request.policyHolderEmail()).orElseGet(() -> new User(
-                request.policyHolderEmail(),
+    @Transactional
+    public ResponseEntity<PolicyResponseDto> createPolicy(PolicyRequestDto request) {
+
+        String sanitizedEmail = request.policyHolderEmail().trim().toLowerCase();
+
+        User user = userRepository.findByEmail(request.policyHolderEmail()).orElseGet(() -> userRepository.save(new User(
+                sanitizedEmail,
                 "12345678", //Default password
                 request.policyHolderName(),
                 UserRole.ROLE_CUSTOMER
-        ));
+        )));
 
         BigDecimal deductible = new BigDecimal(request.deductible());
         BigDecimal maxCoverageLimit = new BigDecimal(request.maxCoverageLimit());
 
-        if (deductible.compareTo(maxCoverageLimit) > 1) {
-            ResponseEntity.badRequest().body(Map.of(
-                    "status", "FAILED",
-                    "message", "Deductible is greater than max coverage"
-            ));
+        if (deductible.compareTo(maxCoverageLimit) > 0) {
+            throw new IllegalArgumentException("Deductible cannot be greater than maximum coverage limit");
         }
 
         Set<Perils> coveredPerils = request.coveredPeril().stream()
@@ -59,19 +61,16 @@ public class PolicyService {
 
         policy.setUser(user);
 
-        policyRepository.save(policy);
-
-        user.addPolicy(policy);
-
-        userRepository.save(user);
+        Policy savedPolicy=policyRepository.save(policy);
 
         PolicyResponseDto response = new PolicyResponseDto(
                 "SUCCESS",
-                "Policy " + policy.getPolicyNumber() + " created for user " + user.getFullName()
+                "Policy " + savedPolicy.getPolicyNumber() + " created for user " + user.getFullName(),
+                savedPolicy.getPolicyNumber()
         );
 
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .body(response);
     }
 

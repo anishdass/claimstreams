@@ -55,11 +55,24 @@ export const createPolicy = async (
 };
 
 export const registerUser = async (email, password, fullName, role) => {
-  const response = api.post("/auth/register", {
+  const response = await api.post("/auth/register", {
     email,
     password,
     fullName,
     role,
   });
+  return response;
+};
+
+export const simulatePeril = async (count) => {
+  const response = await api.post(
+    "/claims/simulate-peril",
+    {},
+    {
+      params: {
+        claimCount: count,
+      },
+    }
+  );
   return response;
 };
