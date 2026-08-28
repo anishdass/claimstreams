@@ -1,16 +1,43 @@
-# React + Vite
+# ⚡ Real-Time Insurance Claim Stream Adjudication Engine
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An event-driven, high-throughput microservice backend built with **Java 21 Virtual Threads**, **Spring Boot**, **Apache Kafka**, and **Redis**. 
 
-Currently, two official plugins are available:
+This system ingests high-volume insurance peril events, processes risk-scoring rules in real time, and routes claims through automated straight-through processing (STP) or manual adjuster review queues.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **High-Concurrency Stream Ingestion:** Leverages Java 21 Virtual Threads (`Executors.newVirtualThreadPerTaskExecutor`) to ingest and publish concurrent catastrophe events to Kafka with minimal thread-context overhead.
+* **Automated Risk Engine:** Evaluates incoming claims against rule criteria (velocity checks, maximum coverage limits, peril coverage, and round-number claim detection).
+* **Straight-Through Processing (STP):** Instantly auto-approves low-risk claims (`Risk Score < 15`) and publishes payout events to down-stream payment queues.
+* **Velocity Tracking via Redis:** Implements rolling window velocity checks per policy number using Redis counters to flag high-frequency suspicious claims.
+* **Interactive Monitoring & Simulator Dashboard:** Modern dark-mode React frontend allowing real-time trigger testing and metrics tracking for STP rates and manual queues.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Tech Stack
+
+* **Backend:** Java 21, Spring Boot 3, Spring Data JPA, Spring Kafka, Redis (`StringRedisTemplate`)
+* **Database:** PostgreSQL (Relational Policy & Claim storage)
+* **Messaging & Cache:** Apache Kafka, Redis
+* **Frontend:** React, Tailwind CSS, Lucide Icons, Axios
+
+---
+
+## ⚡ Real-World Impact
+
+Insurance claim backlogs during natural catastrophes can delay policyholder relief by weeks. This platform demonstrates how event-driven streaming architecture handles **thousands of simultaneous ingestion streams**, automatically settling clear claims in seconds while escalating genuine risk edge cases to human adjusters.
+
+---
+
+## 🚦 Getting Started
+
+### Prerequisites
+* Docker & Docker Compose
+* JDK 21+
+* Node.js v18+
+
+### 1. Start Infrastructure Services
+```bash
+docker-compose up -d
