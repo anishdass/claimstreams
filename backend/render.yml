@@ -1,13 +1,13 @@
-# render.yml
-# Functionality: Multi-service deployment blueprint for Render.
-# Why it is required: Defines the complete cloud infrastructure stack (Postgres, Redis, Spring Boot backend, and React frontend) in a single declarative file for one-click deployment.
+# render.yaml
+# Functionality: Multi-service infrastructure blueprint specification for Render.
+# Why it is required: Provides a declarative configuration to build and launch PostgreSQL, Redis (Key-Value), Spring Boot, and React services in a single automated step.
 
 services:
   # 1. Spring Boot Backend Service
   - type: web
     name: claimstreams-backend
     runtime: docker
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     envVars:
       - key: SPRING_DATASOURCE_URL
@@ -16,12 +16,12 @@ services:
           property: connectionString
       - key: SPRING_REDIS_HOST
         fromService:
-          type: redis
+          type: keyvalue
           name: claimstreams-redis
           property: host
       - key: SPRING_REDIS_PORT
         fromService:
-          type: redis
+          type: keyvalue
           name: claimstreams-redis
           property: port
 
@@ -29,16 +29,16 @@ services:
   - type: web
     name: claimstreams-frontend
     runtime: docker
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
 
+  # 3. Render Managed Redis (Key-Value) Instance
+  - type: keyvalue
+    name: claimstreams-redis
+    ipAllowList: []
+
 databases:
-  # 3. Managed PostgreSQL Database
+  # 4. Managed PostgreSQL Database
   - name: claimstreams-db
     databaseName: claimstream
     user: postgres
-
-# 4. Managed Redis Cache
-redis:
-  - name: claimstreams-redis
-    plan: free
