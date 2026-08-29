@@ -41,4 +41,4 @@ databases:
   # 4. Managed PostgreSQL Database
   - name: claimstreams-db
     databaseName: claimstream
-    user: postgres
+    user: claimstream_admin
