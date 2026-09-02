@@ -64,6 +64,15 @@ export const registerUser = async (email, password, fullName, role) => {
   return response;
 };
 
+export const updatePassword = async (oldPassword, newPassword) => {
+  const response = await api.patch("/auth/change-password", {
+    oldPassword,
+    newPassword,
+  });
+
+  return response.data;
+};
+
 export const simulatePeril = async (count) => {
   const response = await api.post(
     "/claims/simulate-peril",

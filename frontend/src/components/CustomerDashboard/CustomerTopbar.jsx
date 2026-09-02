@@ -1,6 +1,6 @@
 import { useAuth } from "../../context/AuthContext";
+import ChangePasswordButton from "../ChangePasswordButton";
 import LogoutButton from "../CommonComponents/LogoutButton";
-import Login from "../Login";
 
 export function CustomerTopbar({ user }) {
   const { logout } = useAuth();
@@ -20,6 +20,7 @@ export function CustomerTopbar({ user }) {
       </div>
       <div className='flex items-center gap-3'>
         <LogoutButton logout={logout} />
+        {user.isDefaultPassword && <ChangePasswordButton user={user} />}
       </div>
     </header>
   );

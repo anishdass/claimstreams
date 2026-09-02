@@ -9,6 +9,7 @@ import java.util.List;
 public record UserResponseDto(UserRole role,
                               String email,
                               String fullName,
+                              boolean isDefaultPassword,
                               List<Policy> policy,
                               List<InsuranceClaim> claims) {
 }

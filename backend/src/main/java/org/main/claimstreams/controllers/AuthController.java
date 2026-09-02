@@ -7,11 +7,10 @@ import org.main.claimstreams.models.InsuranceClaim;
 import org.main.claimstreams.models.User;
 import org.main.claimstreams.repositories.InsuranceClaimRepository;
 import org.main.claimstreams.repositories.UserRepository;
-import org.main.claimstreams.security.JwtUtils;
+import org.main.claimstreams.services.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,58 +23,16 @@ import java.util.Map;
 public class AuthController {
     private final UserRepository userRepository;
     private final InsuranceClaimRepository claimRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
+    private final AuthService authService;
 
     @PostMapping("/auth/register")
-    public ResponseEntity<Map<String, String>> registerUser(
-            @RequestBody RegisterRequestDto request
-    ) {
-        if (userRepository.existsByEmail(request.email())) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Email already registered"));
-        }
-
-        String encodedPassword = passwordEncoder.encode(request.password());
-
-        User newUser = new User(request.email(), encodedPassword, request.fullName(), request.role());
-        userRepository.save(newUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                "message", "User " + newUser.getFullName() + " created with role: " + newUser.getRole().name()
-        ));
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody RegisterRequestDto request) {
+        return authService.register(request);
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login(
-            @RequestBody LoginRequestDto request
-    ) {
-        var userOpt = userRepository.findByEmail(request.email());
-
-        if (userOpt.isEmpty() || !passwordEncoder.matches(request.password(), userOpt.get().getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
-                    "error", "Invalid credentials"
-            ));
-        }
-
-        User user = userOpt.get();
-        String token = jwtUtils.generateToken(user.getEmail(), user.getRole());
-
-        UserResponseDto userResponseDto = new UserResponseDto(
-                user.getRole(),
-                user.getEmail(),
-                user.getFullName(),
-                user.getPolicies(),
-                user.getClaims()
-        );
-
-        AuthResponseDto response = new AuthResponseDto(
-                token,
-                userResponseDto);
-
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto request) {
+        return authService.login(request);
     }
 
     @GetMapping("/claims/my-claims")
@@ -126,5 +83,8 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-
+    @PatchMapping("/auth/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(Authentication auth, @RequestBody ChangePasswordRequestDto dto) {
+        return authService.changePassword(auth, dto);
+    }
 }

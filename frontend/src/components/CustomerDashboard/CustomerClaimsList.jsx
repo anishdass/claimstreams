@@ -6,9 +6,6 @@ export function CustomerClaimsList({
   setIsClaimModalOpen,
 }) {
 
-  console.log(claims);
-  
-
   return (
     <div className='rounded-xl border border-slate-800 bg-slate-900/50 p-5 shadow-lg backdrop-blur-sm'>
       <div className='flex items-center justify-between mb-4'>

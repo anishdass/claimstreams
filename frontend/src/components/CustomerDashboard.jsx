@@ -4,10 +4,13 @@ import RaiseClaimModal from "./RaiseClaimModal";
 import { CustomerTopbar } from "./CustomerDashboard/CustomerTopbar";
 import { CustomerClaimsList } from "./CustomerDashboard/CustomerClaimsList";
 import { CustomerClaimDetails } from "./CustomerDashboard/CustomerClaimDetails";
+import { useAuth } from "../context/AuthContext";
 
-export default function CustomerDashboard({ user }) {
+export default function CustomerDashboard() {
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
+
+  const { user } = useAuth();
 
   const userPolicies = user?.policy
     ? Array.isArray(user.policy)
@@ -31,9 +34,7 @@ export default function CustomerDashboard({ user }) {
         </div>
 
         <div className='col-span-5'>
-          <CustomerClaimDetails
-            selectedClaim={selectedClaim}
-          />
+          <CustomerClaimDetails selectedClaim={selectedClaim} />
         </div>
       </div>
       <RaiseClaimModal

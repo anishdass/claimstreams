@@ -29,8 +29,9 @@ export function AuthProvider({ children }) {
         localStorage.setItem("authToken", response.token);
         localStorage.setItem("user", JSON.stringify(user));
       } catch (error) {
-        const errorMessage = error.response?.data?.error || "Invalid credentials";
-        toast.error(errorMessage); 
+        const errorMessage =
+          error.response?.data?.error || "Invalid credentials";
+        toast.error(errorMessage);
       }
     }
   };
@@ -42,7 +43,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, setUser }}>
       {children}
     </AuthContext.Provider>
   );
