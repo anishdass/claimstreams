@@ -52,7 +52,7 @@ public class Policy {
     @Column(nullable = false)
     private PolicyStatus status = PolicyStatus.ACTIVE;
 
-    public Policy(String policyHolderName, String policyHolderEmailId, Set<Perils> coveredPeril, BigDecimal maxCoverageLimit, BigDecimal deductible) {
+    public Policy(Set<Perils> coveredPeril, BigDecimal maxCoverageLimit, BigDecimal deductible) {
         this.policyNumber = "POL-UK-" + LocalDateTime.now().getYear() + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.coveredPeril = coveredPeril;
         this.maxCoverageLimit = maxCoverageLimit;
