@@ -16,15 +16,30 @@ export const raiseNewClaim = async (policyNumber, perilType, claimedAmount) => {
     claimedAmount,
   });
 
-  return response;
+  return response.data;
 };
 
-export const getAllClaims = async () => {
-  const response = await api.get("/claims/get-all-claims");
-  return response;
+export const getAllClaims = async (status, pageNumber) => {
+  const response = await api.get("/claims/get-paginated-claims", {
+    params: {
+      status: status,
+      pageNumber: pageNumber,
+    },
+  });
+  return response.data;
 };
 
-export const updateStatusClaim = async (claimId, status) => {
+export const getClaimsMetrics = async () => {
+  const response = await api.get("/claims/get-claims-metrics");
+  return response.data;
+};
+
+export const getMyClaims = async () => {
+  const response = await api.get("/claims/my-claims");
+  return response.data;
+};
+
+export const updateClaimStatus = async (claimId, status) => {
   const response = await api.put("/claims/update-status", {
     claimId,
     status,
@@ -42,7 +57,7 @@ export const createPolicy = async (
   policyHolderName,
   coveredPeril,
   maxCoverageLimit,
-  deductible
+  deductible,
 ) => {
   const response = await api.post("/policies/create", {
     policyHolderEmail,
@@ -81,7 +96,7 @@ export const simulatePeril = async (count) => {
       params: {
         claimCount: count,
       },
-    }
+    },
   );
   return response;
 };

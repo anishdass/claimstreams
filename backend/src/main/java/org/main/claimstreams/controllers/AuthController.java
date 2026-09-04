@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.main.claimstreams.dtos.*;
 import org.main.claimstreams.models.enums.InsuranceClaimStatus;
 import org.main.claimstreams.models.InsuranceClaim;
-import org.main.claimstreams.models.User;
 import org.main.claimstreams.repositories.InsuranceClaimRepository;
 import org.main.claimstreams.repositories.UserRepository;
 import org.main.claimstreams.services.AuthService;
@@ -21,7 +20,6 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AuthController {
-    private final UserRepository userRepository;
     private final InsuranceClaimRepository claimRepository;
     private final AuthService authService;
 
@@ -37,11 +35,7 @@ public class AuthController {
 
     @GetMapping("/claims/my-claims")
     public ResponseEntity<List<InsuranceClaim>> getCustomerClaims(Authentication authentication) {
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow();
-
-        List<InsuranceClaim> myClaims = claimRepository.findByUser(user).orElseThrow();
-
+        List<InsuranceClaim> myClaims = authService.getMyClaims(authentication);
         return ResponseEntity.status(HttpStatus.OK).body(myClaims);
     }
 

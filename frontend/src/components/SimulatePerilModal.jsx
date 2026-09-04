@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { Cpu, X, Zap } from "lucide-react";
 import { toast } from "react-toastify";
-import { getAllClaims, simulatePeril } from "../assets/services/apiCalls";
+import {
+  getAllClaims,
+  getClaimsMetrics,
+  simulatePeril,
+} from "../assets/services/apiCalls";
 
-const SimulatePerilModal = ({ isOpen, onClose, setClaims }) => {
+const SimulatePerilModal = ({
+  isOpen,
+  onClose,
+  setClaims,
+  setClaimsMetrics,
+}) => {
   const [count, setCount] = useState(1000);
   const [isSimulating, setIsSimulating] = useState(false);
 
@@ -23,17 +32,17 @@ const SimulatePerilModal = ({ isOpen, onClose, setClaims }) => {
     try {
       await simulatePeril(numericCount);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      const response = await getAllClaims();
-      console.log(response)
-      const updatedClaims = response.data;
-      setClaims(updatedClaims);
+      const updatedClaims = await getAllClaims();
+      const response = await getClaimsMetrics();
+      setClaims(updatedClaims.content);
+      setClaimsMetrics(response);
       toast.success(
-        `Triggered stream simulation for ${numericCount} peril events!`
+        `Triggered stream simulation for ${numericCount} peril events!`,
       );
       onClose();
     } catch (error) {
       toast.error(
-        error?.response?.data || "Failed to execute peril simulation stream."
+        error?.response?.data || "Failed to execute peril simulation stream.",
       );
     } finally {
       setIsSimulating(false);
@@ -75,7 +84,6 @@ const SimulatePerilModal = ({ isOpen, onClose, setClaims }) => {
             <input
               type='number'
               min='1'
-              max='100'
               required
               value={count}
               onChange={(e) => setCount(e.target.value)}

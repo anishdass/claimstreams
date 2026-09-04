@@ -2,9 +2,11 @@ package org.main.claimstreams.services;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.main.claimstreams.dtos.*;
-import org.main.claimstreams.exception.UserNotFoundException;
+import org.main.claimstreams.models.InsuranceClaim;
 import org.main.claimstreams.models.User;
+import org.main.claimstreams.repositories.InsuranceClaimRepository;
 import org.main.claimstreams.repositories.UserRepository;
 import org.main.claimstreams.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -21,6 +24,7 @@ import java.util.Map;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final InsuranceClaimRepository claimRepository;
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
@@ -30,7 +34,7 @@ public class AuthService {
 
     public ResponseEntity<?> login(LoginRequestDto request) {
         User user = userRepository.findByEmail(request.email()).orElseThrow(() ->
-                new UserNotFoundException("User with email " + request.email() + " not found")
+                new ResourceNotFoundException("User with email " + request.email() + " not found")
         );
 
         if (!encoder.matches(request.password(), user.getPassword())) {
@@ -116,7 +120,7 @@ public class AuthService {
         String email = auth.getName();
 
         User user = userRepository.findByEmail(email).orElseThrow(() ->
-                new UserNotFoundException("User with email " + email + " not found")
+                new ResourceNotFoundException("User with email " + email + " not found")
         );
 
         if (!encoder.matches(request.oldPassword(), user.getPassword())) {
@@ -136,5 +140,11 @@ public class AuthService {
                         "status", "SUCCESS",
                         "message", "Password changed"
                 ));
+    }
+
+    public List<InsuranceClaim> getMyClaims(Authentication authentication) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow();
+        return claimRepository.findByUser(user).orElseThrow();
     }
 }

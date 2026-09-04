@@ -1,33 +1,37 @@
 import { useState } from "react";
-import { raiseNewClaim } from "../assets/services/apiCalls";
+import { getMyClaims, raiseNewClaim } from "../assets/services/apiCalls";
+import { toast } from "react-toastify";
 
-const RaiseClaimModal = ({ isOpen, onClose, policies }) => {
+const RaiseClaimModal = ({ isOpen, onClose, policies, setClaims }) => {
   const [selectedPolicyId, setSelectedPolicyId] = useState(
-    policies?.[0]?.policyNumber || ""
+    policies?.[0]?.policyNumber || "",
   );
   const [selectedPeril, setSelectedPeril] = useState("");
   const [claimedAmount, setClaimedAmount] = useState("");
 
   if (!isOpen) return null;
 
-  // Locate current policy context to populate peril options dynamically
   const activePolicy = policies?.find(
-    (p) => p.policyNumber === selectedPolicyId
+    (p) => p.policyNumber === selectedPolicyId,
   );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedPolicyId || !selectedPeril || !claimedAmount) return;
 
-    const response = await raiseNewClaim(
-      selectedPolicyId,
-      selectedPeril,
-      claimedAmount
-    );
-
-    console.log(response);
-
-    onClose();
+    try {
+      const response1 = await raiseNewClaim(
+        selectedPolicyId,
+        selectedPeril,
+        claimedAmount,
+      );
+      toast.success(response1.message);
+      const response2 = await getMyClaims();
+      setClaims(response2);
+      onClose();
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
   };
 
   return (

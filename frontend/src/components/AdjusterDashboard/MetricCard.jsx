@@ -1,17 +1,39 @@
-const MetricCard = ({ claims }) => {
-  const totalSubmitted = claims.length;
+import { useEffect, useState } from "react";
+import { getClaimsMetrics } from "../../assets/services/apiCalls";
+import { toast } from "react-toastify";
+import { LoadingButton } from "../CommonComponents/LoadingButton";
 
-  const autoApprovedCount = claims.filter(
-    (c) => c.status === "AUTO_APPROVED"
-  ).length;
+const MetricCard = ({claimsMetrics, setClaimsMetrics}) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchMetricData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getClaimsMetrics();
+        setClaimsMetrics(response);
+      } catch (error) {
+        toast.error(
+          error?.response?.data?.message || "An unexpected error occured",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchMetricData();
+  }, []);
+
+  if (isLoading) {
+    return <LoadingButton />;
+  }
+  const totalSubmitted = claimsMetrics?.totalClaims;
+
+  const autoApprovedCount = claimsMetrics?.approvedClaims;
 
   const stpRate = totalSubmitted
     ? ((autoApprovedCount / totalSubmitted) * 100).toFixed(1)
     : 0;
-
-  const pendingManualCount = claims.filter(
-    (c) => c.status === "MANUAL_REVIEW" || c.status === "SUBMITTED"
-  ).length;
+  const pendingManualCount = claimsMetrics?.pendingClaims;
 
   return (
     <div>
@@ -25,7 +47,6 @@ const MetricCard = ({ claims }) => {
             {totalSubmitted}
           </p>
         </div>
-
         {/* STP Rate Card */}
         <div className='bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col justify-between shadow-sm'>
           <span className='text-xs text-slate-400 font-medium tracking-wide'>
@@ -35,7 +56,6 @@ const MetricCard = ({ claims }) => {
             {stpRate}%
           </p>
         </div>
-
         {/* Pending Queue Card */}
         <div className='bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col justify-between shadow-sm'>
           <span className='text-xs text-slate-400 font-medium tracking-wide'>

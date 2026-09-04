@@ -2,11 +2,13 @@ import { useState } from "react";
 import PolicyDetailsModal from "../PolicyDetailsModal";
 import {
   getAllClaims,
-  updateStatusClaim,
+  updateClaimStatus,
 } from "../../assets/services/apiCalls";
 import { toast } from "react-toastify";
 
 const ClaimDetails = ({
+  pageNumber,
+  policyStatus,
   setClaims,
   setSelectedClaim,
   selectedClaim,
@@ -24,19 +26,18 @@ const ClaimDetails = ({
 
   const handleStatusUpdate = async (claimId, status) => {
     try {
-      const response = await updateStatusClaim(claimId, status);
+      const response = await updateClaimStatus(claimId, status);
       toast.success(response?.data?.message);
-      const res = await getAllClaims();
-      const updatedClaims = res.data;
-      setClaims(updatedClaims);
-      const updatedClaim = updatedClaims.find(
-        (claim) => claim.claimId == claimId
+      const updatedClaims = await getAllClaims(policyStatus, pageNumber);
+      setClaims(updatedClaims.content);
+      const updatedClaim = updatedClaims.content.find(
+        (claim) => claim.claimId == claimId,
       );
       setSelectedClaim(updatedClaim);
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-          "Unable to the update status of the claim"
+          "Unable to the update status of the claim",
       );
     }
   };

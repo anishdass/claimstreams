@@ -1,34 +1,28 @@
 package org.main.claimstreams.controllers;
 
 import lombok.AllArgsConstructor;
+import org.main.claimstreams.dtos.ClaimMetricDto;
 import org.main.claimstreams.dtos.CreateClaimRequestDto;
 import org.main.claimstreams.dtos.CreateClaimResponseDto;
 import org.main.claimstreams.dtos.UpdateClaimStatusDto;
-import org.main.claimstreams.models.Policy;
-import org.main.claimstreams.models.User;
 import org.main.claimstreams.models.InsuranceClaim;
 import org.main.claimstreams.repositories.InsuranceClaimRepository;
 import org.main.claimstreams.repositories.PolicyRepository;
 import org.main.claimstreams.repositories.UserRepository;
 import org.main.claimstreams.services.CatastropheIngestionService;
 import org.main.claimstreams.services.ClaimsService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/claims")
 @AllArgsConstructor
 public class ClaimsController {
-    private final InsuranceClaimRepository claimRepository;
-    private final PolicyRepository policyRepository;
-    private final UserRepository userRepository;
     private final CatastropheIngestionService loadSimulator;
     private final ClaimsService claimsService;
 
@@ -37,36 +31,12 @@ public class ClaimsController {
             @RequestBody CreateClaimRequestDto request,
             Authentication authentication
     ) {
-
-        Optional<Policy> policyOpt = policyRepository.findByPolicyNumber(request.policyNumber());
-
-        if (policyOpt.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(
-                            "message", "Policy not found"
-                    ));
-        }
-
-        Policy policy = policyOpt.get();
-
-        InsuranceClaim claim = new InsuranceClaim(policy, request.perilType(), new BigDecimal(request.claimedAmount()));
-
-        claimRepository.save(claim);
-
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow();
-
-        user.addClaim(claim);
-
-        userRepository.save(user);
-
+        InsuranceClaim claim = claimsService.submitClaim(authentication, request);
         CreateClaimResponseDto response = new CreateClaimResponseDto(
                 "ACCEPTED",
                 claim.getClaimId(),
                 "Claim created"
         );
-
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
@@ -83,11 +53,21 @@ public class ClaimsController {
         ));
     }
 
-    @GetMapping("/get-all-claims")
-    public ResponseEntity<List<InsuranceClaim>> getAllClaims() {
-        List<InsuranceClaim> claims = claimsService.getAllClaims();
+    @GetMapping("/get-paginated-claims")
+    public ResponseEntity<Page<InsuranceClaim>> getAllClaims(
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        Page<InsuranceClaim> claims = claimsService.getAllClaims(status, pageNumber, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(claims);
     }
+
+    @GetMapping("/get-claims-metrics")
+    public ResponseEntity<ClaimMetricDto> getClaimDetails() {
+        ClaimMetricDto claimMetricData = claimsService.getClaimsData();
+        return ResponseEntity.status(HttpStatus.OK).body(claimMetricData);
+    }
+
 
     @PutMapping("/update-status")
     public ResponseEntity<Map<String, String>> updateStatus(@RequestBody UpdateClaimStatusDto req) {
