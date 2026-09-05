@@ -83,8 +83,6 @@ class ClaimstreamsApplicationTests {
 
 
         activePolicy = new Policy(
-                "Anish",
-                "anishdassatoffice@gmail.com",
                 perils,
                 new BigDecimal("10000.00"),
                 new BigDecimal("250.00")

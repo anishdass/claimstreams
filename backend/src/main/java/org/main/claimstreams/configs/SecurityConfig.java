@@ -44,6 +44,7 @@ public class SecurityConfig {
                                 "/claimstream-websocket/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
+                                "/v3/api-docs",
                                 "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/claims/create").hasAnyRole("CUSTOMER", "ADJUSTER", "SENIOR_ADJUSTER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/policy/create").hasAnyRole("ADJUSTER", "SENIOR_ADJUSTER")
