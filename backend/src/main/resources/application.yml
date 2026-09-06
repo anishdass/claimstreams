@@ -21,3 +21,6 @@ spring:
     consumer:
       group-id: claimstream-adjudication-group
       auto-offset-reset: earliest
+
+
+debug: true
