@@ -53,7 +53,7 @@ const Login = () => {
           </div>
           <button
             type='submit'
-            className='w-full rounded-xl bg-indigo-600 py-3 text-xs font-semibold text-white shadow-md shadow-indigo-600/30 hover:bg-indigo-500 transition-all active:scale-95'>
+            className='w-full rounded-xl bg-indigo-600 py-3 text-xs font-semibold text-white shadow-md shadow-indigo-600/30 hover:bg-indigo-500 transition-all active:scale-95 cursor-pointer'>
             Sign In to Dashboard
           </button>
         </form>
