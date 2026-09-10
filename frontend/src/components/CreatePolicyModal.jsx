@@ -1,15 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { X, ShieldPlus } from "lucide-react";
 import { toast } from "react-toastify";
-import { createPolicy, fetchUpdatedPerils } from "../assets/services/apiCalls";
-import Loader from "./CommonComponents/Loader";
+import { createPolicy } from "../assets/services/apiCalls";
 
 export default function CreatePolicyModal({
   isOpen,
   onClose,
-  loadingPerils,
-  setLoadingPerils,
+  availablePerils,
 }) {
+
   const [formData, setFormData] = useState({
     policyHolderEmail: "",
     policyHolderName: "",
@@ -18,34 +17,13 @@ export default function CreatePolicyModal({
     deductible: "",
   });
 
-  const [availablePerils, setAvailablePerils] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Fetch updated perils from backend whenever modal opens
-  useEffect(() => {
-    if (isOpen) {
-      const loadPerils = async () => {
-        try {
-          setLoadingPerils(true);
-          const res = await fetchUpdatedPerils();
-          const perilsList = Array.isArray(res) ? res : res?.data || [];
-          setAvailablePerils(perilsList);
-        } catch (error) {
-          console.log(error?.res);
-        } finally {
-          setLoadingPerils(false);
-        }
-      };
-      loadPerils();
-    }
-  }, [isOpen]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handles multi-select checkbox updates for covered perils
   const handlePerilToggle = (peril) => {
     setFormData((prev) => {
       const exists = prev.coveredPeril.includes(peril);
@@ -156,33 +134,28 @@ export default function CreatePolicyModal({
             <label className='block text-xs font-medium text-slate-300 mb-1'>
               Covered Perils (Select Multiple)
             </label>
-            {loadingPerils ? (
-              <div className='text-xs text-slate-500 py-2'>
-                Fetching available perils...
-              </div>
-            ) : (
-              <div className='max-h-32 overflow-y-auto bg-slate-950 border border-slate-800 rounded-lg p-2 space-y-1.5 custom-scrollbar'>
-                {availablePerils.length === 0 ? (
-                  <span className='text-xs text-slate-500'>
-                    No perils available.
-                  </span>
-                ) : (
-                  availablePerils.map((peril) => (
-                    <label
-                      key={peril}
-                      className='flex items-center gap-2 text-xs text-slate-300 hover:bg-slate-900 p-1.5 rounded cursor-pointer transition-colors'>
-                      <input
-                        type='checkbox'
-                        checked={formData.coveredPeril.includes(peril)}
-                        onChange={() => handlePerilToggle(peril)}
-                        className='rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500'
-                      />
-                      <span>{peril}</span>
-                    </label>
-                  ))
-                )}
-              </div>
-            )}
+
+            <div className='max-h-32 overflow-y-auto bg-slate-950 border border-slate-800 rounded-lg p-2 space-y-1.5 custom-scrollbar'>
+              {availablePerils.length === 0 ? (
+                <span className='text-xs text-slate-500'>
+                  No perils available.
+                </span>
+              ) : (
+                availablePerils.map((peril) => (
+                  <label
+                    key={peril}
+                    className='flex items-center gap-2 text-xs text-slate-300 hover:bg-slate-900 p-1.5 rounded cursor-pointer transition-colors'>
+                    <input
+                      type='checkbox'
+                      checked={formData.coveredPeril.includes(peril)}
+                      onChange={() => handlePerilToggle(peril)}
+                      className='rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500'
+                    />
+                    <span>{peril}</span>
+                  </label>
+                ))
+              )}
+            </div>
           </div>
 
           <div className='grid grid-cols-2 gap-3'>

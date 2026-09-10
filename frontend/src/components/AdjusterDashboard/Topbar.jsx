@@ -5,14 +5,35 @@ import { Plus, UserPlus, Zap } from "lucide-react";
 import CreatePolicyModal from "../CreatePolicyModal";
 import RegisterModal from "../RegisterModal";
 import SimulatePerilModal from "../SimulatePerilModal";
+import { toast } from "react-toastify";
+import { fetchUpdatedPerils } from "../../assets/services/apiCalls";
 import Loader from "../CommonComponents/Loader";
 
 const Topbar = ({ setClaimsMetrics, setClaims }) => {
   const [openCreatePolicyModal, setOpenCreatePolicyModal] = useState(false);
   const [openSimulationModal, setOpenSimulationModal] = useState(false);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
-  const [loadingPerils, setLoadingPerils] = useState(false);
+  const [availablePerils, setAvailablePerils] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const { logout, user } = useAuth();
+
+  const createPolicy = async () => {
+    try {
+      setIsLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const res = await fetchUpdatedPerils();
+      const perilsList = Array.isArray(res) ? res : res?.data || [];
+      setAvailablePerils(perilsList);
+      setOpenCreatePolicyModal(true);
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "An unexpected error occured",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <header className='mb-8'>
@@ -75,11 +96,17 @@ const Topbar = ({ setClaimsMetrics, setClaims }) => {
           <button
             type='button'
             onClick={() => {
-              setOpenCreatePolicyModal(true);
+              createPolicy();
             }}
             className='inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-all cursor-pointer shadow-sm shadow-indigo-500/20 hover:shadow-indigo-500/40 active:scale-95'>
-            <Plus className='w-4 h-4' />
-            <span>{loadingPerils ? <Loader /> : "Create Policy"}</span>
+            {isLoading ? (
+              <Loader color={"#ffffff"} size={8} />
+            ) : (
+              <>
+                <Plus className='w-4 h-4' />
+                <span>Create Policy</span>
+              </>
+            )}
           </button>
           {user.role == "ROLE_SENIOR_ADJUSTER" && (
             <button
@@ -94,8 +121,7 @@ const Topbar = ({ setClaimsMetrics, setClaims }) => {
         <CreatePolicyModal
           isOpen={openCreatePolicyModal}
           onClose={() => setOpenCreatePolicyModal(false)}
-          loadingPerils={loadingPerils}
-          setLoadingPerils={setLoadingPerils}
+          availablePerils={availablePerils}
         />
         <RegisterModal
           isOpen={openRegisterModal}
