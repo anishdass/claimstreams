@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import LogoutButton from "../CommonComponents/LogoutButton";
-import { Plus, UserPlus } from "lucide-react";
+import { Plus, UserPlus, Zap } from "lucide-react";
 import CreatePolicyModal from "../CreatePolicyModal";
 import RegisterModal from "../RegisterModal";
 import SimulatePerilModal from "../SimulatePerilModal";
 
-const Topbar = ({
-  setClaimsMetrics,
-  setClaims,
-}) => {
+const Topbar = ({ setClaimsMetrics, setClaims }) => {
   const [openCreatePolicyModal, setOpenCreatePolicyModal] = useState(false);
   const [openSimulationModal, setOpenSimulationModal] = useState(false);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
@@ -21,7 +18,9 @@ const Topbar = ({
         <div className='flex items-center gap-4'>
           {/* Logo */}
           <div className='relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/20'>
-            <span className='text-xl'>🛡️</span>
+            <span className='text-xl'>
+              <Zap className='w-8 h-8 text-amber-400 fill-amber-300 drop-shadow-[0_0_12px_rgba(251,191,36,0.9)] animate-pulse' />
+            </span>
 
             {/* Live indicator */}
             <span className='absolute -right-1 -top-1 flex h-4 w-4'>
