@@ -48,19 +48,6 @@ const Topbar = ({ setClaimsMetrics, setClaims }) => {
         </div>
 
         <div className='flex items-center gap-4'>
-          <div className='hidden items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/70 px-3 py-2 md:flex'>
-            <span className='h-2 w-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400'></span>
-
-            <div className='leading-none'>
-              <p className='text-[10px] font-medium uppercase tracking-wider text-slate-500'>
-                Stream
-              </p>
-              <p className='mt-1 text-xs font-medium text-slate-300'>
-                Kafka Connected
-              </p>
-            </div>
-          </div>
-
           <button
             onClick={() => setOpenSimulationModal(true)}
             className='group relative flex items-center gap-2.5 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0'>
