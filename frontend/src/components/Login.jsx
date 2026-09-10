@@ -22,7 +22,7 @@ const Login = () => {
   if (loading) {
     return (
       <div className='flex min-h-screen items-center justify-center bg-slate-950 px-4'>
-        <Loader color='#6366f1' size={12} margin={4} speedMultiplier={0.5} />
+        <Loader size={12} margin={4} />
       </div>
     );
   }

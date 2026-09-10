@@ -22,20 +22,17 @@ export default function RegisterModal({ isOpen, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
     try {
+      setIsSubmitting(true);
       const response = await registerUser(
         formData.email,
         formData.password,
         formData.fullName,
-        formData.role
+        formData.role,
       );
       toast.success(
-        response?.data?.message || "Account registered successfully!"
+        response?.data?.message || "Account registered successfully!",
       );
-
-      // Reset form state on successful submission
       setFormData({
         email: "",
         password: "",
@@ -48,7 +45,7 @@ export default function RegisterModal({ isOpen, onClose }) {
       toast.error(
         error?.response?.data?.message ||
           error?.data?.message ||
-          "Registration failed. Please try again."
+          "Registration failed. Please try again.",
       );
     } finally {
       setIsSubmitting(false);

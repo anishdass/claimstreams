@@ -27,11 +27,9 @@ const SimulatePerilModal = ({
       return;
     }
 
-    setIsSimulating(true);
-
     try {
+      setIsSimulating(true);
       await simulatePeril(numericCount);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       const updatedClaims = await getAllClaims();
       const response = await getClaimsMetrics();
       setClaims(updatedClaims.content);

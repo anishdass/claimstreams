@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { X, ShieldPlus } from "lucide-react";
 import { toast } from "react-toastify";
 import { createPolicy, fetchUpdatedPerils } from "../assets/services/apiCalls";
+import Loader from "./CommonComponents/Loader";
 
 export default function CreatePolicyModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -20,8 +21,8 @@ export default function CreatePolicyModal({ isOpen, onClose }) {
   useEffect(() => {
     if (isOpen) {
       const loadPerils = async () => {
-        setLoadingPerils(true);
         try {
+          setLoadingPerils(true);
           const res = await fetchUpdatedPerils();
           const perilsList = Array.isArray(res) ? res : res?.data || [];
           setAvailablePerils(perilsList);
@@ -36,8 +37,6 @@ export default function CreatePolicyModal({ isOpen, onClose }) {
       loadPerils();
     }
   }, [isOpen]);
-
-  if (!isOpen) return null;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -73,14 +72,14 @@ export default function CreatePolicyModal({ isOpen, onClose }) {
       return;
     }
 
-    setIsSubmitting(true);
     try {
+      setIsSubmitting(true);
       const response = await createPolicy(
         formData.policyHolderEmail,
         formData.policyHolderName,
         formData.coveredPeril,
         formData.maxCoverageLimit,
-        formData.deductible
+        formData.deductible,
       );
       toast.success(response?.data?.message || "Policy Created Successfully!");
       onClose();
@@ -90,6 +89,16 @@ export default function CreatePolicyModal({ isOpen, onClose }) {
       setIsSubmitting(false);
     }
   };
+
+  if (!isOpen) return null;
+
+  if (loadingPerils || isSubmitting) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4'>

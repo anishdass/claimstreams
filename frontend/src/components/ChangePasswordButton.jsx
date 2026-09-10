@@ -8,6 +8,7 @@ import { useState } from "react";
 import { loginCall, updatePassword } from "../assets/services/apiCalls";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
+import Loader from "./CommonComponents/Loader";
 
 const ChangePasswordButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,9 +19,9 @@ const ChangePasswordButton = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
+      setLoading(true);
       const response1 = await updatePassword(oldPassword, newPassword);
       toast.success(response1.message);
       setIsOpen(false);
@@ -37,6 +38,14 @@ const ChangePasswordButton = () => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div>
+        <Loader color={"#f43f5e"} />
+      </div>
+    );
+  }
 
   return (
     <>

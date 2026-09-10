@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { getMyClaims, raiseNewClaim } from "../assets/services/apiCalls";
 import { toast } from "react-toastify";
+import Loader from "./CommonComponents/Loader";
 
 const RaiseClaimModal = ({ isOpen, onClose, policies, setClaims }) => {
   const [selectedPolicyId, setSelectedPolicyId] = useState(
@@ -8,6 +9,7 @@ const RaiseClaimModal = ({ isOpen, onClose, policies, setClaims }) => {
   );
   const [selectedPeril, setSelectedPeril] = useState("");
   const [claimedAmount, setClaimedAmount] = useState("");
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
@@ -20,6 +22,7 @@ const RaiseClaimModal = ({ isOpen, onClose, policies, setClaims }) => {
     if (!selectedPolicyId || !selectedPeril || !claimedAmount) return;
 
     try {
+      setLoading(true);
       const response1 = await raiseNewClaim(
         selectedPolicyId,
         selectedPeril,
@@ -31,8 +34,16 @@ const RaiseClaimModal = ({ isOpen, onClose, policies, setClaims }) => {
       onClose();
     } catch (error) {
       toast.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    <div>
+      <Loader />
+    </div>;
+  }
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4'>

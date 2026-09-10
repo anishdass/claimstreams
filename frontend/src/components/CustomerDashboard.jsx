@@ -5,13 +5,14 @@ import { CustomerTopbar } from "./CustomerDashboard/CustomerTopbar";
 import { CustomerClaimsList } from "./CustomerDashboard/CustomerClaimsList";
 import { CustomerClaimDetails } from "./CustomerDashboard/CustomerClaimDetails";
 import { useAuth } from "../context/AuthContext";
-import api from "../assets/api/axios";
 import { getMyClaims } from "../assets/services/apiCalls";
 import { toast } from "react-toastify";
+import Loader from "./CommonComponents/Loader";
 
 export default function CustomerDashboard() {
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const [claims, setClaims] = useState(null);
 
@@ -24,14 +25,25 @@ export default function CustomerDashboard() {
   useEffect(() => {
     const getData = async () => {
       try {
+        setLoading(true);
         const response = await getMyClaims();
         setClaims(response);
       } catch (error) {
-        toast.error(error?.response?.message)
+        toast.error(error?.response?.message);
+      } finally {
+        setLoading(false);
       }
     };
     getData();
   }, [claims]);
+
+  if (loading) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen bg-slate-950 text-slate-100 font-sans p-6'>

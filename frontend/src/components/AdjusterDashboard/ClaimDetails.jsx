@@ -5,6 +5,7 @@ import {
   updateClaimStatus,
 } from "../../assets/services/apiCalls";
 import { toast } from "react-toastify";
+import Loader from "../CommonComponents/Loader";
 
 const ClaimDetails = ({
   pageNumber,
@@ -15,6 +16,7 @@ const ClaimDetails = ({
   renderStatusBadge,
 }) => {
   const [activeModalClaim, setActiveModalClaim] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleOpenPolicyModal = (claim) => {
     setActiveModalClaim(claim);
@@ -26,6 +28,7 @@ const ClaimDetails = ({
 
   const handleStatusUpdate = async (claimId, status) => {
     try {
+      setLoading(true);
       const response = await updateClaimStatus(claimId, status);
       toast.success(response?.data?.message);
       const updatedClaims = await getAllClaims(policyStatus, pageNumber);
@@ -39,8 +42,18 @@ const ClaimDetails = ({
         error?.response?.data?.message ||
           "Unable to the update status of the claim",
       );
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
 
   return selectedClaim ? (
     <div className='col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between'>

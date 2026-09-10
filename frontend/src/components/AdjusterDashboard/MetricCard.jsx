@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getClaimsMetrics } from "../../assets/services/apiCalls";
 import { toast } from "react-toastify";
-import { LoadingButton } from "../CommonComponents/LoadingButton";
+import Loader from "../CommonComponents/Loader";
 
-const MetricCard = ({claimsMetrics, setClaimsMetrics}) => {
+const MetricCard = ({ claimsMetrics, setClaimsMetrics }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -23,9 +23,6 @@ const MetricCard = ({claimsMetrics, setClaimsMetrics}) => {
     fetchMetricData();
   }, []);
 
-  if (isLoading) {
-    return <LoadingButton />;
-  }
   const totalSubmitted = claimsMetrics?.totalClaims;
 
   const autoApprovedCount = claimsMetrics?.approvedClaims;
@@ -34,6 +31,14 @@ const MetricCard = ({claimsMetrics, setClaimsMetrics}) => {
     ? ((autoApprovedCount / totalSubmitted) * 100).toFixed(1)
     : 0;
   const pendingManualCount = claimsMetrics?.pendingClaims;
+
+  if (isLoading) {
+    return (
+      <div>
+        <Loader size={8} margin={6} />;
+      </div>
+    );
+  }
 
   return (
     <div>

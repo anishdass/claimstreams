@@ -5,6 +5,7 @@ import ClaimsTable from "./AdjusterDashboard/ClaimsTable";
 import ClaimDetails from "./AdjusterDashboard/ClaimDetails";
 import renderStatusBadge from "./StatusBadge";
 import { getAllClaims } from "../assets/services/apiCalls";
+import { Loader } from "lucide-react";
 
 export default function AdjusterDashboard() {
   const [selectedClaim, setSelectedClaim] = useState();
@@ -13,27 +14,36 @@ export default function AdjusterDashboard() {
   const [pageData, setPageData] = useState(null);
   const [status, setStatus] = useState("ALL");
   const [claimsMetrics, setClaimsMetrics] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchClaims = async (pageNumber) => {
       try {
+        setLoading(true);
         const updatedClaims = await getAllClaims(status, pageNumber);
         setClaims(updatedClaims.content || []);
         setPageData(updatedClaims);
       } catch (error) {
         console.error("Failed to fetch claims:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchClaims(pageNumber);
   }, [pageNumber, status]);
 
+  if (loading) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className='min-h-screen bg-slate-950 text-slate-100 font-sans p-6'>
       {/* Header */}
-      <Topbar
-        setClaimsMetrics={setClaimsMetrics}
-        setClaims={setClaims}
-      />
+      <Topbar setClaimsMetrics={setClaimsMetrics} setClaims={setClaims} />
 
       {/* Metrics Bar */}
       <MetricCard
