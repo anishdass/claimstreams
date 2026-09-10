@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { Eye, EyeOff } from "lucide-react";
 
 /**
  * Component: Login
@@ -9,6 +10,7 @@ import { useAuth } from "../context/AuthContext";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
 
   const handleSubmit = (e) => {
@@ -34,22 +36,39 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder='name@company.com'
-              className='w-full rounded-xl bg-slate-950 border border-slate-800 p-3 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500'
+              className='w-full rounded-xl bg-slate-950 border border-slate-800 p-3 pr-10 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500'
               required
             />
           </div>
           <div>
-            <label className='block text-xs font-medium text-slate-300 mb-1'>
+            <label
+              htmlFor='password'
+              className='block text-xs font-medium text-slate-300 mb-1'>
               Password
             </label>
-            <input
-              type='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder='******'
-              className='w-full rounded-xl bg-slate-950 border border-slate-800 p-3 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500'
-              required
-            />
+            <div className='relative'>
+              <input
+                id='password'
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder='******'
+                className='w-full rounded-xl bg-slate-950 border border-slate-800 p-3 pr-10 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500'
+                required
+              />
+
+              <button
+                type='button'
+                onClick={() => setShowPassword((prev) => !prev)}
+                className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 focus:outline-none'
+                aria-label={showPassword ? "Hide password" : "Show password"}>
+                {showPassword ? (
+                  <EyeOff className='w-4 h-4 cursor-pointer' />
+                ) : (
+                  <Eye className='w-4 h-4 cursor-pointer' />
+                )}
+              </button>
+            </div>
           </div>
           <button
             type='submit'
