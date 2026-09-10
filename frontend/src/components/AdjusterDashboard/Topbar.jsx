@@ -21,7 +21,6 @@ const Topbar = ({ setClaimsMetrics, setClaims }) => {
   const createPolicy = async () => {
     try {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       const res = await fetchUpdatedPerils();
       const perilsList = Array.isArray(res) ? res : res?.data || [];
       setAvailablePerils(perilsList);

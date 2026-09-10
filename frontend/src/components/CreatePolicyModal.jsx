@@ -8,7 +8,6 @@ export default function CreatePolicyModal({
   onClose,
   availablePerils,
 }) {
-
   const [formData, setFormData] = useState({
     policyHolderEmail: "",
     policyHolderName: "",
@@ -196,7 +195,7 @@ export default function CreatePolicyModal({
           <div className='flex gap-2 pt-3 border-t border-slate-800 mt-4'>
             <button
               type='button'
-              //   onClick={onClose}
+              onClick={onClose}
               className='flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold py-2 rounded-lg transition-colors cursor-pointer'>
               Cancel
             </button>
