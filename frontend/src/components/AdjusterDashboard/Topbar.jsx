@@ -5,11 +5,13 @@ import { Plus, UserPlus, Zap } from "lucide-react";
 import CreatePolicyModal from "../CreatePolicyModal";
 import RegisterModal from "../RegisterModal";
 import SimulatePerilModal from "../SimulatePerilModal";
+import Loader from "../CommonComponents/Loader";
 
 const Topbar = ({ setClaimsMetrics, setClaims }) => {
   const [openCreatePolicyModal, setOpenCreatePolicyModal] = useState(false);
   const [openSimulationModal, setOpenSimulationModal] = useState(false);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
+  const [loadingPerils, setLoadingPerils] = useState(false);
   const { logout, user } = useAuth();
 
   return (
@@ -72,10 +74,12 @@ const Topbar = ({ setClaimsMetrics, setClaims }) => {
         <div className='flex items-center gap-2.5'>
           <button
             type='button'
-            onClick={() => setOpenCreatePolicyModal(true)}
+            onClick={() => {
+              setOpenCreatePolicyModal(true);
+            }}
             className='inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-all cursor-pointer shadow-sm shadow-indigo-500/20 hover:shadow-indigo-500/40 active:scale-95'>
             <Plus className='w-4 h-4' />
-            <span>Create Policy</span>
+            <span>{loadingPerils ? <Loader /> : "Create Policy"}</span>
           </button>
           {user.role == "ROLE_SENIOR_ADJUSTER" && (
             <button
@@ -90,6 +94,8 @@ const Topbar = ({ setClaimsMetrics, setClaims }) => {
         <CreatePolicyModal
           isOpen={openCreatePolicyModal}
           onClose={() => setOpenCreatePolicyModal(false)}
+          loadingPerils={loadingPerils}
+          setLoadingPerils={setLoadingPerils}
         />
         <RegisterModal
           isOpen={openRegisterModal}

@@ -4,7 +4,12 @@ import { toast } from "react-toastify";
 import { createPolicy, fetchUpdatedPerils } from "../assets/services/apiCalls";
 import Loader from "./CommonComponents/Loader";
 
-export default function CreatePolicyModal({ isOpen, onClose }) {
+export default function CreatePolicyModal({
+  isOpen,
+  onClose,
+  loadingPerils,
+  setLoadingPerils,
+}) {
   const [formData, setFormData] = useState({
     policyHolderEmail: "",
     policyHolderName: "",
@@ -14,7 +19,6 @@ export default function CreatePolicyModal({ isOpen, onClose }) {
   });
 
   const [availablePerils, setAvailablePerils] = useState([]);
-  const [loadingPerils, setLoadingPerils] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch updated perils from backend whenever modal opens
@@ -27,9 +31,7 @@ export default function CreatePolicyModal({ isOpen, onClose }) {
           const perilsList = Array.isArray(res) ? res : res?.data || [];
           setAvailablePerils(perilsList);
         } catch (error) {
-          console.log(error?.response?.data);
-
-          toast.error("Failed to load available perils from backend");
+          console.log(error?.res);
         } finally {
           setLoadingPerils(false);
         }
@@ -91,14 +93,6 @@ export default function CreatePolicyModal({ isOpen, onClose }) {
   };
 
   if (!isOpen) return null;
-
-  if (loadingPerils || isSubmitting) {
-    return (
-      <div>
-        <Loader />
-      </div>
-    );
-  }
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4'>
