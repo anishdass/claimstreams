@@ -7,7 +7,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/AuthContext";
 
 function MainContent() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   return (
     <div className='bg-slate-950 min-h-screen'>

@@ -20,8 +20,6 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     if (email && password) {
       try {
-        setLoading(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
         const response = await loginCall(email, password);
         const user = response.user;
 
