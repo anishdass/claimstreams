@@ -5,7 +5,8 @@ import ClaimsTable from "./AdjusterDashboard/ClaimsTable";
 import ClaimDetails from "./AdjusterDashboard/ClaimDetails";
 import renderStatusBadge from "./StatusBadge";
 import { getAllClaims } from "../assets/services/apiCalls";
-import { Loader } from "lucide-react";
+import Loader from "./CommonComponents/Loader";
+
 
 export default function AdjusterDashboard() {
   const [selectedClaim, setSelectedClaim] = useState();
@@ -14,7 +15,7 @@ export default function AdjusterDashboard() {
   const [pageData, setPageData] = useState(null);
   const [status, setStatus] = useState("ALL");
   const [claimsMetrics, setClaimsMetrics] = useState(null);
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchClaims = async (pageNumber) => {
