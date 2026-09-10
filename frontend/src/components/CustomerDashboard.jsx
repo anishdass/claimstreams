@@ -35,11 +35,11 @@ export default function CustomerDashboard() {
       }
     };
     getData();
-  }, [claims]);
+  }, []);
 
   if (loading) {
     return (
-      <div>
+      <div className='flex justify-center items-center min-h-screen'>
         <Loader />
       </div>
     );
