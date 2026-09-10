@@ -9,14 +9,6 @@ import { useAuth } from "./context/AuthContext";
 function MainContent() {
   const { user, loading } = useAuth();
 
-  if (loading) {
-    return (
-      <div className='bg-slate-950 min-h-screen text-white'>
-        Restoring session...
-      </div>
-    );
-  }
-
   return (
     <div className='bg-slate-950 min-h-screen'>
       {!user ? (

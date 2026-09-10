@@ -6,7 +6,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -15,13 +15,13 @@ export function AuthProvider({ children }) {
     if (storedUser && token) {
       setUser(JSON.parse(storedUser));
     }
-
-    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
     if (email && password) {
       try {
+        setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         const response = await loginCall(email, password);
         const user = response.user;
 
@@ -32,6 +32,8 @@ export function AuthProvider({ children }) {
         const errorMessage =
           error.response?.data?.error || "Invalid credentials";
         toast.error(errorMessage);
+      } finally {
+        setLoading(false);
       }
     }
   };

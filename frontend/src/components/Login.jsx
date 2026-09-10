@@ -1,22 +1,31 @@
-import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { Eye, EyeOff } from "lucide-react";
-
 /**
  * Component: Login
  * Functionality: Renders authentication inputs and invokes the login context action.
  * Why it is required: Captures user credentials securely at the UI boundary.
  */
+
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { Eye, EyeOff } from "lucide-react";
+import Loader from "./CommonComponents/Loader";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     login(email, password);
   };
+
+  if (loading) {
+    return (
+      <div className='flex min-h-screen items-center justify-center bg-slate-950 px-4'>
+        <Loader color='#6366f1' size={12} margin={4} speedMultiplier={0.5} />
+      </div>
+    );
+  }
 
   return (
     <div className='flex min-h-screen items-center justify-center bg-slate-950 px-4'>
