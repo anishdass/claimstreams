@@ -2,6 +2,7 @@ import { useState } from "react";
 import { X, ShieldPlus } from "lucide-react";
 import { toast } from "react-toastify";
 import { createPolicy } from "../assets/services/apiCalls";
+import Loader from "./CommonComponents/Loader";
 
 export default function CreatePolicyModal({
   isOpen,
@@ -61,6 +62,7 @@ export default function CreatePolicyModal({
         formData.deductible,
       );
       toast.success(response?.data?.message || "Policy Created Successfully!");
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       onClose();
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to create policy");
@@ -70,6 +72,17 @@ export default function CreatePolicyModal({
   };
 
   if (!isOpen) return null;
+
+  if (isSubmitting) {
+    return (
+      <div className='fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4'>
+        <span className='flex items-center justify-center text-xl font-bold gap-2'>
+          Creating policy
+          <Loader />
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4'>
