@@ -20,6 +20,7 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     if (email && password) {
       try {
+        setLoading(true)
         const response = await loginCall(email, password);
         const user = response.user;
 
