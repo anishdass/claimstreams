@@ -9,13 +9,20 @@ import { loginCall, updatePassword } from "../assets/services/apiCalls";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import Loader from "./CommonComponents/Loader";
+import { CircleUser } from "lucide-react";
 
 const ChangePasswordButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { setUser, user } = useAuth();
+
+  const openPasswordModal = () => {
+    setIsDropdownOpen(false);
+    setIsOpen(true);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,10 +37,12 @@ const ChangePasswordButton = () => {
 
       const updatedUser = response2.user;
       setUser(updatedUser);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (err) {
       toast.error(
         err?.response?.data?.error || err?.message || "An error occurred",
       );
+      setIsOpen(true);
     } finally {
       setLoading(false);
     }
@@ -41,74 +50,91 @@ const ChangePasswordButton = () => {
 
   if (loading) {
     return (
-      <div>
-        <Loader color={"#f43f5e"} />
+      <div className='fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200 gap-2'>
+        Updating password
+        <Loader size={8} />
       </div>
     );
   }
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className='bg-indigo-500 hover:bg-indigo-700 text-white text-xs font-light px-2 py-1 rounded-full transition-colors hover:cursor-pointer'>
-        Change Password
-      </button>
+      <div className='relative'>
+        <button
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          aria-haspopup='menu'
+          aria-expanded={isDropdownOpen}>
+          <CircleUser className='w-6 h-6 inline-block cursor-pointer' />
+        </button>
+
+        {isDropdownOpen && (
+          <div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50'>
+            <button
+              type='button'
+              onClick={openPasswordModal}
+              className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:text-gray-900 cursor-pointer'>
+              Change Password
+            </button>
+          </div>
+        )}
+      </div>
 
       {isOpen && (
-        <div className='fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50'>
-          <div className='bg-indigo-900 rounded-lg p-6 max-w-md w-full shadow-xl'>
-            <h3 className='text-lg font-semibold text-black mb-2'>
+        <div className='fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200'>
+          <div className='bg-slate-900 border border-slate-800 rounded-xl p-6 max-w-md w-full shadow-2xl'>
+            <h3 className='text-lg font-semibold text-slate-100 mb-1'>
               Update Password
             </h3>
-            <p className='text-sm text-black mb-4'>
+            <p className='text-xs text-slate-400 mb-5 leading-relaxed'>
               Please choose a new password between 8-16 characters containing
               upper, lower, numeric, and special characters.
             </p>
 
-            <form onSubmit={handleSubmit} className='space-y-4 mt-2'>
+            <form onSubmit={handleSubmit} className='space-y-4'>
               <div className='space-y-4'>
                 {/* Old Password Row */}
                 <div className='flex items-center justify-between gap-4'>
-                  <label className='w-1/3 text-sm font-medium text-black'>
+                  <label className='w-1/3 text-sm font-medium text-slate-300'>
                     Old Password
                   </label>
                   <input
                     type='password'
                     value={oldPassword}
                     onChange={(e) => setOldPassword(e.target.value)}
-                    className='w-2/3 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none text-black'
+                    className='w-2/3 bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all'
+                    placeholder='••••••••'
                     required
                   />
                 </div>
 
                 {/* New Password Row */}
                 <div className='flex items-center justify-between gap-4'>
-                  <label className='w-1/3 text-sm font-medium text-black'>
+                  <label className='w-1/3 text-sm font-medium text-slate-300'>
                     New Password
                   </label>
                   <input
                     type='password'
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className='w-2/3 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none text-black'
+                    className='w-2/3 bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all'
+                    placeholder='••••••••'
                     required
                   />
                 </div>
               </div>
 
-              <div className='flex justify-end gap-2 pt-2'>
+              <div className='flex justify-end gap-3 pt-4 border-t border-slate-800/60'>
                 <button
                   type='button'
                   onClick={() => setIsOpen(false)}
-                  className='px-2 py-2 font-medium text-white bg-red-400 hover:bg-red-500 rounded-full hover:cursor-pointer'
+                  className='px-4 py-2 text-sm font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors cursor-pointer disabled:opacity-50'
                   disabled={loading}>
                   Cancel
                 </button>
                 <button
                   type='submit'
                   disabled={loading}
-                  className='px-2 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full disabled:opacity-50 hover:cursor-pointer'>
+                  className='px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-md shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'>
                   {loading ? "Saving..." : "Update Password"}
                 </button>
               </div>

@@ -52,6 +52,7 @@ export default function CustomerDashboard() {
       <div className='grid grid-cols-12 gap-6'>
         <div className='col-span-7'>
           <CustomerClaimsList
+            user={user}
             claims={claims}
             selectedClaim={selectedClaim}
             setSelectedClaim={setSelectedClaim}

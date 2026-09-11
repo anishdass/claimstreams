@@ -1,6 +1,8 @@
 import { Plus } from "lucide-react";
+import { toast } from "react-toastify";
 
 export function CustomerClaimsList({
+  user,
   claims,
   selectedClaim,
   setSelectedClaim,
@@ -13,13 +15,29 @@ export function CustomerClaimsList({
         <h2 className='text-sm font-semibold text-slate-200 tracking-wider'>
           Your Claims
         </h2>
-        {/* Modal Trigger Button */}
-        <button
-          onClick={() => setIsClaimModalOpen(true)}
-          className='flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-base transition-all shadow-md shadow-indigo-600/30 active:scale-95 cursor-pointer'
-          title='Raise New Claim'>
-          <Plus className='w-5 h-5' />
-        </button>
+        <div className='flex items-center gap-2'>
+          <button
+            type='button'
+            onClick={() => {
+              if (user?.isDefaultPassword) {
+                toast.error("Change your password before raising a claim.");
+                return;
+              }
+              setIsClaimModalOpen(true);
+            }}
+            className={`flex items-center justify-center w-7 h-7 rounded-lg ${
+              user?.isDefaultPassword
+                ? "bg-slate-600"
+                : "bg-indigo-600 hover:bg-indigo-500 shadow-indigo-600/30"
+            } text-white font-bold text-base transition-all shadow-md active:scale-95 cursor-pointer`}
+            title={
+              user?.isDefaultPassword
+                ? "Change your password before raising a claim"
+                : "Raise New Claim"
+            }>
+            <Plus className='w-5 h-5' />
+          </button>
+        </div>
       </div>
       <div className='space-y-3'>
         {claims?.length ? (
