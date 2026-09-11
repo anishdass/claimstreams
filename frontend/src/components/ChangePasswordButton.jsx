@@ -40,7 +40,7 @@ const ChangePasswordButton = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (err) {
       toast.error(
-        err?.response?.data?.error || err?.message || "An error occurred",
+        err?.response?.data?.message || err?.message || "An error occurred",
       );
       setIsOpen(true);
     } finally {
