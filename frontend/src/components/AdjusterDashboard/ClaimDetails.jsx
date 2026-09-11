@@ -49,7 +49,7 @@ const ClaimDetails = ({
 
   if (loading) {
     return (
-      <div>
+      <div className='col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-5 flex items-center justify-center min-h-[400px]'>
         <Loader />
       </div>
     );
