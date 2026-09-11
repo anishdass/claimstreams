@@ -152,7 +152,7 @@ const ClaimDetails = ({
               selectedClaim.status === "AUTO_APPROVED" ||
               selectedClaim.status === "APPROVED"
             }
-            className='flex-1 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:hover:bg-emerald-600 text-white text-xs font-semibold py-2.5 rounded-lg transition-all'>
+            className='flex-1 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:hover:bg-emerald-600 text-white text-xs font-semibold py-2.5 rounded-lg transition-all cursor-pointer'>
             Approve
           </button>
           <button
@@ -160,7 +160,7 @@ const ClaimDetails = ({
               handleStatusUpdate(selectedClaim.claimId, "REJECTED")
             }
             disabled={selectedClaim.status === "REJECTED"}
-            className='flex-1 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:hover:bg-rose-600 text-white text-xs font-semibold py-2.5 rounded-lg transition-all'>
+            className='flex-1 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:hover:bg-rose-600 text-white text-xs font-semibold py-2.5 rounded-lg transition-all cursor-pointer'>
             Reject
           </button>
         </div>
