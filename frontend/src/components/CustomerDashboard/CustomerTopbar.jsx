@@ -1,5 +1,5 @@
 import { useAuth } from "../../context/AuthContext";
-import ChangePasswordButton from "../ChangePasswordButton";
+import ProfileBadge from "../ProfileBadge";
 import LogoutButton from "../CommonComponents/LogoutButton";
 
 export function CustomerTopbar({ user }) {
@@ -19,8 +19,7 @@ export function CustomerTopbar({ user }) {
         </p>
       </div>
       <div className='flex items-center gap-3'>
-        <LogoutButton logout={logout} />
-        {user.isDefaultPassword && <ChangePasswordButton user={user} />}
+        <ProfileBadge />
       </div>
     </header>
   );

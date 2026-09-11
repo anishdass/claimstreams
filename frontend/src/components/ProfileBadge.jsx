@@ -9,19 +9,19 @@ import { loginCall, updatePassword } from "../assets/services/apiCalls";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import Loader from "./CommonComponents/Loader";
-import { CircleUser } from "lucide-react";
+import { CircleUser, LogOut, KeyRound } from "lucide-react";
 
-const ChangePasswordButton = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const ProfileBadge = () => {
+  const [isPasswordChangeModalOpen, setIsPasswordChangeModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setUser, user } = useAuth();
+  const { setUser, user, logout } = useAuth();
 
   const openPasswordModal = () => {
     setIsDropdownOpen(false);
-    setIsOpen(true);
+    setIsPasswordChangeModalOpen(true);
   };
 
   const handleSubmit = async (e) => {
@@ -31,7 +31,7 @@ const ChangePasswordButton = () => {
       setLoading(true);
       const response1 = await updatePassword(oldPassword, newPassword);
       toast.success(response1.message);
-      setIsOpen(false);
+      setIsPasswordChangeModalOpen(false);
 
       const response2 = await loginCall(user.email, newPassword);
 
@@ -42,7 +42,7 @@ const ChangePasswordButton = () => {
       toast.error(
         err?.response?.data?.message || err?.message || "An error occurred",
       );
-      setIsOpen(true);
+      setIsPasswordChangeModalOpen(true);
     } finally {
       setLoading(false);
     }
@@ -68,18 +68,32 @@ const ChangePasswordButton = () => {
         </button>
 
         {isDropdownOpen && (
-          <div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50'>
+          <div className='absolute right-0 mt-2 w-30 bg-slate-900 border border-slate-800 rounded-xl shadow-xl z-50 py-1.5 divide-y divide-slate-800/60'>
+            {user?.isDefaultPassword && (
+              <button
+                type='button'
+                onClick={openPasswordModal}
+                className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:text-gray-900 cursor-pointer'>
+                <div className='items-center inline-flex gap-2 text-white'>
+                  <KeyRound className='size-3.5 text-blue-500' />
+                  Change Password
+                </div>
+              </button>
+            )}
             <button
               type='button'
-              onClick={openPasswordModal}
+              onClick={logout}
               className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:text-gray-900 cursor-pointer'>
-              Change Password
+              <div className=' items-center inline-flex gap-2 text-white'>
+                <LogOut className='size-3.5 text-red-500' />
+                Logout
+              </div>
             </button>
           </div>
         )}
       </div>
 
-      {isOpen && (
+      {isPasswordChangeModalOpen && (
         <div className='fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200'>
           <div className='bg-slate-900 border border-slate-800 rounded-xl p-6 max-w-md w-full shadow-2xl'>
             <h3 className='text-lg font-semibold text-slate-100 mb-1'>
@@ -126,7 +140,7 @@ const ChangePasswordButton = () => {
               <div className='flex justify-end gap-3 pt-4 border-t border-slate-800/60'>
                 <button
                   type='button'
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setIsPasswordChangeModalOpen(false)}
                   className='px-4 py-2 text-sm font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors cursor-pointer disabled:opacity-50'
                   disabled={loading}>
                   Cancel
@@ -146,4 +160,4 @@ const ChangePasswordButton = () => {
   );
 };
 
-export default ChangePasswordButton;
+export default ProfileBadge;

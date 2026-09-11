@@ -11,8 +11,6 @@ const ClaimsTable = ({
   setPageNumber,
   pageData,
 }) => {
-  const [loading, setLoading] = useState(false);
-
   return (
     <div className='col-span-7 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between'>
       <div>
@@ -22,18 +20,20 @@ const ClaimsTable = ({
             Live Claim Stream
           </h3>
           <div className='flex gap-2'>
-            {["ALL", "MANUAL_REVIEW", "SUBMITTED"].map((f) => (
-              <button
-                key={f}
-                onClick={() => setStatus(f)}
-                className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
-                  status === f
-                    ? "bg-slate-800 border-indigo-500 text-indigo-400"
-                    : "border-slate-800 text-slate-400 hover:border-slate-700"
-                }`}>
-                {f.replace("_", " ")}
-              </button>
-            ))}
+            {["ALL", "MANUAL_REVIEW", "SUBMITTED"].map(
+              (f) => (
+                <button
+                  key={f}
+                  onClick={() => setStatus(f)}
+                  className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
+                    status === f
+                      ? "bg-slate-800 border-indigo-500 text-indigo-400"
+                      : "border-slate-800 text-slate-400 hover:border-slate-700"
+                  }`}>
+                  {f.replace("_", " ")}
+                </button>
+              ),
+            )}
           </div>
         </div>
 

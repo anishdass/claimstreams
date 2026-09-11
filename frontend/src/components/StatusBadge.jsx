@@ -1,9 +1,4 @@
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  XCircle,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, XCircle } from "lucide-react";
 
 const renderStatusBadge = (status) => {
   switch (status) {
@@ -16,6 +11,7 @@ const renderStatusBadge = (status) => {
       );
 
     case "MANUAL_REVIEW":
+    case "SLA_BREACH_ESCALATED":
       return (
         <span className='inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs px-2.5 py-1 rounded-full font-medium'>
           <AlertTriangle className='w-3.5 h-3.5 text-amber-400' />

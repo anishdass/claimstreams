@@ -1,5 +1,6 @@
 package org.main.claimstreams;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.main.claimstreams.models.enums.Perils;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Testcontainers
+@RequiredArgsConstructor
 class ClaimstreamsApplicationTests {
 
     @Container
@@ -56,16 +58,10 @@ class ClaimstreamsApplicationTests {
         registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
     }
 
-    @Autowired
+
     private ClaimProducer claimProducer;
-
-    @Autowired
     private InsuranceClaimRepository claimRepository;
-
-    @Autowired
     private PolicyRepository policyRepository;
-
-    @Autowired
     private ClaimAuditLogRepository auditLogRepository;
 
     Policy activePolicy;
