@@ -68,7 +68,7 @@ const ProfileBadge = () => {
         </button>
 
         {isDropdownOpen && (
-          <div className='absolute right-0 mt-2 w-30 bg-slate-900 border border-slate-800 rounded-xl shadow-xl z-50 py-1.5 divide-y divide-slate-800/60'>
+          <div className='absolute right-0 mt-2 w-50 bg-slate-900 border border-slate-800 rounded-xl shadow-xl z-50 py-1.5 divide-y divide-slate-800/60'>
             {user?.isDefaultPassword && (
               <button
                 type='button'
