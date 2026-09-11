@@ -9,7 +9,7 @@ const RaiseClaimModal = ({ isOpen, onClose, policies, setClaims }) => {
   );
   const [selectedPeril, setSelectedPeril] = useState("");
   const [claimedAmount, setClaimedAmount] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
 
@@ -21,8 +21,14 @@ const RaiseClaimModal = ({ isOpen, onClose, policies, setClaims }) => {
     e.preventDefault();
     if (!selectedPolicyId || !selectedPeril || !claimedAmount) return;
 
+    if (claimedAmount > activePolicy.maxCoverageLimit) {
+      toast.error(
+        `Claimed amount exceeds the maximum coverage limit of £${activePolicy.maxCoverageLimit}`,
+      );
+    }
+
     try {
-      setLoading(true);
+      setIsLoading(true);
       const response1 = await raiseNewClaim(
         selectedPolicyId,
         selectedPeril,
@@ -35,14 +41,17 @@ const RaiseClaimModal = ({ isOpen, onClose, policies, setClaims }) => {
     } catch (error) {
       toast.error(error?.response?.data?.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  if (loading) {
-    <div>
-      <Loader />
-    </div>;
+  if (isLoading) {
+    return (
+      <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 gap-2'>
+        Creating claim <br />
+        <Loader size={8} />
+      </div>
+    );
   }
 
   return (
@@ -159,7 +168,7 @@ const RaiseClaimModal = ({ isOpen, onClose, policies, setClaims }) => {
             </button>
             <button
               type='submit'
-              className='px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-md shadow-indigo-600/30 transition-all active:scale-95'>
+              className='px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-md shadow-indigo-600/30 transition-all active:scale-95 cursor-pointer'>
               Submit Claim
             </button>
           </div>

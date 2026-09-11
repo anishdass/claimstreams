@@ -1,3 +1,5 @@
+import { Plus } from "lucide-react";
+
 export function CustomerClaimsList({
   claims,
   selectedClaim,
@@ -5,19 +7,18 @@ export function CustomerClaimsList({
   renderStatusBadge,
   setIsClaimModalOpen,
 }) {
-
   return (
     <div className='rounded-xl border border-slate-800 bg-slate-900/50 p-5 shadow-lg backdrop-blur-sm'>
       <div className='flex items-center justify-between mb-4'>
-        <h2 className='text-sm font-semibold text-slate-200 uppercase tracking-wider'>
+        <h2 className='text-sm font-semibold text-slate-200 tracking-wider'>
           Your Claims
         </h2>
         {/* Modal Trigger Button */}
         <button
           onClick={() => setIsClaimModalOpen(true)}
-          className='flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-base transition-all shadow-md shadow-indigo-600/30 active:scale-95'
+          className='flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-base transition-all shadow-md shadow-indigo-600/30 active:scale-95 cursor-pointer'
           title='Raise New Claim'>
-          +
+          <Plus className='w-5 h-5' />
         </button>
       </div>
       <div className='space-y-3'>
