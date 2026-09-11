@@ -6,6 +6,7 @@ import {
   getClaimsMetrics,
   simulatePeril,
 } from "../assets/services/apiCalls";
+import Loader from "./CommonComponents/Loader";
 
 const SimulatePerilModal = ({
   isOpen,
@@ -46,6 +47,17 @@ const SimulatePerilModal = ({
       setIsSimulating(false);
     }
   };
+
+  if (isSimulating) {
+    return (
+      <div className='fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4'>
+        <p className='text-sm flex justify-center items-center text-slate-100'>
+          Simulating peril events...
+          <Loader />
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4'>

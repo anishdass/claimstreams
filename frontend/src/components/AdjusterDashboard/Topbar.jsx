@@ -16,7 +16,7 @@ const Topbar = ({ setClaimsMetrics, setClaims }) => {
   const [availablePerils, setAvailablePerils] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { logout, user } = useAuth();
+  const { user } = useAuth();
 
   const createPolicy = async () => {
     try {
