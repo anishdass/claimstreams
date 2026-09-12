@@ -37,5 +37,9 @@ spring:
         key-serializer: org.apache.kafka.common.serialization.StringSerializer
         value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
+logging:
+  level:
+    io.netty.handler.ssl: DEBUG
+    org.springframework.data.redis: DEBUG
 
 debug: true
