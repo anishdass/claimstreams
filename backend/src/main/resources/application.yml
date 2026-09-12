@@ -21,8 +21,9 @@ spring:
         enabled: ${REDIS_SSL_ENABLED:true}
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    security:
+      protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
     properties:
-      security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
       sasl.mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
       sasl.jaas.config: ${KAFKA_JAAS_CONFIG:apache.kafka.common.security.plain.PlainLoginModule required username="local" password="local";}
       ssl.endpoint.identification.algorithm: ${KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:https}
