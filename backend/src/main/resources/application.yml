@@ -25,6 +25,7 @@ spring:
       security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
       sasl.mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
       sasl.jaas.config: ${KAFKA_JAAS_CONFIG:apache.kafka.common.security.plain.PlainLoginModule required username="local" password="local";}
+      ssl.endpoint.identification.algorithm: ${KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:https}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
