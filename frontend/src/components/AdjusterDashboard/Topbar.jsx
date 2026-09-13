@@ -27,7 +27,7 @@ const Topbar = ({ setClaimsMetrics, setClaims }) => {
       setOpenCreatePolicyModal(true);
     } catch (error) {
       toast.error(
-        error?.response?.data?.message || "An unexpected error occured",
+        error?.response?.data?.message || "Error fetching available perils",
       );
     } finally {
       setIsLoading(false);

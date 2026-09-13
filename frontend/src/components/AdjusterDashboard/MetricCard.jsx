@@ -14,7 +14,7 @@ const MetricCard = ({ claimsMetrics, setClaimsMetrics }) => {
         setClaimsMetrics(response);
       } catch (error) {
         toast.error(
-          error?.response?.data?.message || "An unexpected error occured",
+          error?.response?.data?.message || "Error fetching claims metrics",
         );
       } finally {
         setIsLoading(false);
