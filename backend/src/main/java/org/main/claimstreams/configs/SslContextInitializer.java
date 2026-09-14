@@ -28,7 +28,7 @@ public class SslContextInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(SslContextInitializer.class);
 
-    @Value("${spring.kafka.ssl.truststore-certificate}")
+    @Value("${spring.kafka.security.ssl.truststore-certificate}")
     private String pemCertificateProperty;
 
     @PostConstruct
