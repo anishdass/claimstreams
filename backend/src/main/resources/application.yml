@@ -31,11 +31,11 @@ spring:
         mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
         jaas:
           config: ${KAFKA_JAAS_CONFIG:apache.kafka.common.security.plain.PlainLoginModule required username="local" password="local";}
-      ssl:
-        endpoint:
-          identification:
-            algorithm: ${KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:https}
-        truststore-certificate: ${CUSTOM_PEM_CERTIFICATE:}
+    ssl:
+      endpoint:
+        identification:
+          algorithm: ${KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:https}
+      truststore-certificate: ${CUSTOM_PEM_CERTIFICATE:}
     consumer:
       group-id: claimstream-adjudication-group
       auto-offset-reset: earliest
