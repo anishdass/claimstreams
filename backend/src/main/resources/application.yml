@@ -21,9 +21,12 @@ spring:
         enabled: ${REDIS_SSL_ENABLED:true}
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    security:
+      protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     properties:
-      security:
-        protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
       sasl:
         mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
         jaas:
@@ -32,14 +35,6 @@ spring:
         endpoint:
           identification:
             algorithm: ${KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:https}
-        truststore:
-          location: ${kafka.truststore.path.override}
-          password: ${KAFKA_TRUSTSTORE_PASSWORD || secretpassword}
-          type: JKS
-
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
       group-id: claimstream-adjudication-group
       auto-offset-reset: earliest
