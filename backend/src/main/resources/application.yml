@@ -34,7 +34,7 @@ spring:
             algorithm: ${KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:https}
         truststore:
           location: classpath:kafka.truststore.jks
-          password: secretpassword
+          password: ${KAFKA_TRUSTSTORE_PASSWORD || secretpassword}
           type: JKS
 
     producer:
