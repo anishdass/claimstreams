@@ -132,8 +132,8 @@ public class AuthService {
                     ));
         }
 
-//        String newPassword = encoder.encode(request.newPassword());
-//        user.setPassword(newPassword);
+        String newPassword = encoder.encode(request.newPassword());
+        user.setPassword(newPassword);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(Map.of(
