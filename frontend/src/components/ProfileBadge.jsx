@@ -40,10 +40,7 @@ const ProfileBadge = () => {
       setUser(updatedUser);
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (err) {
-      toast.error(
-        err?.response?.data?.error || err?.message || "An error occurred",
-      );
-      console.error(err?.response?.data?.error);
+      toast.error(err?.response?.data?.message || "An error occurred");
       setIsPasswordChangeModalOpen(true);
     } finally {
       setLoading(false);

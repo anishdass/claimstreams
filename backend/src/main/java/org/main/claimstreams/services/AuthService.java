@@ -113,7 +113,7 @@ public class AuthService {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(Map.of(
                             "status", "failed",
-                            "error", "Password must be 8-16 characters and contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
+                            "message", "Password must be 8-16 characters and contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
                     ));
         }
 
