@@ -41,9 +41,9 @@ const ProfileBadge = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (err) {
       toast.error(
-        err?.response?.data?.message || err?.message || "An error occurred",
+        err?.response?.data?.error || err?.message || "An error occurred",
       );
-      console.error(err?.response?.data?.message || err?.message);
+      console.error(err?.response?.data?.error);
       setIsPasswordChangeModalOpen(true);
     } finally {
       setLoading(false);
