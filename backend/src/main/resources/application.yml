@@ -19,11 +19,10 @@ spring:
       password: ${REDIS_PASSWORD:}
       ssl:
         enabled: ${REDIS_SSL_ENABLED:false}
-
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
     security:
-      protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_SSL}
+      protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -39,15 +38,15 @@ spring:
       sasl:
         mechanism: ${KAFKA_SASL_MECHANISM:SCRAM-SHA-256}
         jaas:
-          config: ${KAFKA_JAAS_CONFIG}
+          config: ${KAFKA_JAAS_CONFIG:}
       ssl:
         endpoint:
           identification:
-            algorithm: ${KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:HTTPS}
+            algorithm: ${KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:}
         truststore:
-          location: ${kafka.truststore.path}
-          password: ${kafka.truststore.password}
-          type: JKS
+          location: ${kafka.truststore.path:}
+          password: ${kafka.truststore.password:}
+          type: ${kafka.truststore.type:JKS}
 
 logging:
   level:
