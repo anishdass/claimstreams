@@ -46,6 +46,7 @@ public class CatastropheIngestionService {
                         int deductiblePercentage = random.nextInt(2, 5);
                         double deductible = (deductiblePercentage * randomCoverage) / 100.0;
 
+
                         PolicyRequestDto policyDto = new PolicyRequestDto(
                                 "jane@gmail.com",
                                 "Jane Doe",
@@ -65,23 +66,11 @@ public class CatastropheIngestionService {
                         Policy policy = policyRepository.findByPolicyNumber(policyNumber)
                                 .orElseThrow(() -> new IllegalStateException("Policy not found in DB: " + policyNumber));
 
-                        boolean injectHighRisk = random.nextDouble() < 0.40;
-                        BigDecimal claimedAmount;
+                        double minClaim = randomCoverage * 0.70;
+                        double maxClaim = randomCoverage * 0.90;
 
-                        if (injectHighRisk) {
-                            if (random.nextBoolean()) {
-                                long roundMultiplier = random.nextInt(1, (int) (randomCoverage / 1000));
-                                claimedAmount = BigDecimal.valueOf(roundMultiplier * 1000).setScale(2, RoundingMode.HALF_UP);
-                            } else {
-                                double highVal = randomCoverage * (0.95 + (random.nextDouble() * 0.04));
-                                claimedAmount = BigDecimal.valueOf(highVal).setScale(2, RoundingMode.HALF_UP);
-                            }
-                        } else {
-                            double minClaim = 500.0;
-                            double maxLowRiskClaim = randomCoverage * 0.70;
-                            double randomClaimVal = minClaim + (random.nextDouble() * (maxLowRiskClaim - minClaim));
-                            claimedAmount = BigDecimal.valueOf(randomClaimVal).setScale(2, RoundingMode.HALF_UP);
-                        }
+                        double randomClaimValue = minClaim + (maxClaim - minClaim) * random.nextDouble();
+                        BigDecimal claimedAmount = BigDecimal.valueOf(randomClaimValue).setScale(2, RoundingMode.HALF_UP);
 
                         Perils peril = Perils.valueOf(selectedPeril.toUpperCase());
 

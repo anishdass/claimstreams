@@ -111,29 +111,46 @@ public class ClaimAdjudicationEngine {
     private int evaluateRiskScore(InsuranceClaim claim, Policy policy) {
         int score = 0;
 
-        String velocityKey = "claims:velocity:" + claim.getPolicy().getPolicyNumber();
-        Long recentClaimsCount = redisTemplate.opsForValue().increment(velocityKey);
-
-        if (recentClaimsCount != null && recentClaimsCount == 1) {
-            redisTemplate.expire(velocityKey, Duration.ofHours(24));
+        // 1. Simulating a session/device velocity check (e.g., rapid submissions in a demo session)
+        String demoFingerprintKey = "claims:demo:velocity";
+        Long recentSubmissions = redisTemplate.opsForValue().increment(demoFingerprintKey);
+        if (recentSubmissions != null && recentSubmissions == 1) {
+            redisTemplate.expire(demoFingerprintKey, Duration.ofMinutes(10));
+        }
+        // Every 3rd or 4th demo claim gets flagged for high frequency/velocity
+        if (recentSubmissions != null && recentSubmissions % 3 == 0) {
+            score += 35;
         }
 
-        if (recentClaimsCount != null && recentClaimsCount > 2) {
-            score += 40;
-        }
-
+        // 2. Claim-to-Coverage Ratio (High severity check)
         BigDecimal percentageOfLimit = claim.getClaimedAmount()
                 .divide(policy.getMaxCoverageLimit(), 2, RoundingMode.HALF_UP);
 
-        if (percentageOfLimit.compareTo(new BigDecimal(".90")) > 0) {
-            score += 25;
-        }
-
-        if (claim.getClaimedAmount().remainder(new BigDecimal("1000")).compareTo(BigDecimal.ZERO) == 0) {
+        if (percentageOfLimit.compareTo(new BigDecimal("0.85")) > 0) {
+            score += 30; // Pushing close to max limit
+        } else if (percentageOfLimit.compareTo(new BigDecimal("0.75")) > 0) {
             score += 15;
         }
 
-        return Math.min(100, score);
+        // 3. Suspiciously Clean / Round Numbers (Common indicator in inflated claims)
+        // Checking against multiples of 100 or 500 makes this happen frequently enough in demos
+        BigDecimal remainder = claim.getClaimedAmount().remainder(new BigDecimal("500"));
+        if (remainder.compareTo(BigDecimal.ZERO) == 0) {
+            score += 20;
+        }
+
+        // 4. Low Deductible vs High Claim Ratio anomaly
+        // If the deductible percentage is on the lower tier but the claim is high
+        BigDecimal deductiblePercentage = policy.getDeductible()
+                .divide(policy.getMaxCoverageLimit(), 4, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal("100"));
+
+        if (deductiblePercentage.compareTo(new BigDecimal("2.00")) <= 0
+                && percentageOfLimit.compareTo(new BigDecimal("0.80")) > 0) {
+            score += 15;
+        }
+
+        return score;
     }
 
     private void rejectClaim(InsuranceClaim claim, InsuranceClaimStatus previousStatus, String reason) {
