@@ -8,18 +8,6 @@ export function CustomerTopbar({ user }) {
       <div className='min-w-0'>
         <div className='flex flex-wrap items-center gap-x-2 gap-y-1'>
           <div className='ml-2 flex items-center gap-2'>
-            <div className='relative shrink-0 rounded-xl border-[0.5px] border-indigo-500/30 bg-linear-to-br from-indigo-500/20 to-purple-500/10 p-3 text-indigo-400 shadow-lg shadow-indigo-500/5'>
-              <SquareUser className='h-8 w-8' strokeWidth={1.5} />
-
-              <span className='absolute -right-1 -top-1 flex h-2.5 w-2.5'>
-                <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75'></span>
-                <span className='relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500'></span>
-              </span>
-            </div>
-    <header className='mb-6 flex flex-col gap-4 border-b border-slate-800 pb-5 sm:flex-row sm:items-center sm:justify-between'>
-      <div className='min-w-0'>
-        <div className='flex flex-wrap items-center gap-x-2 gap-y-1'>
-          <div className='ml-2 flex items-center gap-2'>
             <div className='relative shrink-0 rounded-xl border border-indigo-500/30 bg-linear-to-br from-indigo-500/20 to-purple-500/10 p-3 text-indigo-400 shadow-lg shadow-indigo-500/5'>
               <SquareUser className='h-7 w-7' />
 
