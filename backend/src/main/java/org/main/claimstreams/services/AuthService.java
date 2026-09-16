@@ -124,7 +124,7 @@ public class AuthService {
         );
 
         if (!encoder.matches(request.oldPassword(), user.getPassword())) {
-            ResponseEntity
+            return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of(
                             "status", "FAILED",
@@ -132,8 +132,8 @@ public class AuthService {
                     ));
         }
 
-        String newPassword = encoder.encode(request.newPassword());
-        user.setPassword(newPassword);
+//        String newPassword = encoder.encode(request.newPassword());
+//        user.setPassword(newPassword);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(Map.of(
