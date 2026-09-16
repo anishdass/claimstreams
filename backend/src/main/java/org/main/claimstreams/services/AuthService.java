@@ -134,6 +134,7 @@ public class AuthService {
 
         String newPassword = encoder.encode(request.newPassword());
         user.setPassword(newPassword);
+        userRepository.save(user);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(Map.of(
