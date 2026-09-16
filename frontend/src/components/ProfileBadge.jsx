@@ -12,7 +12,8 @@ import Loader from "./CommonComponents/Loader";
 import { CircleUser, LogOut, KeyRound } from "lucide-react";
 
 const ProfileBadge = () => {
-  const [isPasswordChangeModalOpen, setIsPasswordChangeModalOpen] = useState(false);
+  const [isPasswordChangeModalOpen, setIsPasswordChangeModalOpen] =
+    useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -42,6 +43,7 @@ const ProfileBadge = () => {
       toast.error(
         err?.response?.data?.message || err?.message || "An error occurred",
       );
+      console.error(err?.response?.data?.message || err?.message);
       setIsPasswordChangeModalOpen(true);
     } finally {
       setLoading(false);
