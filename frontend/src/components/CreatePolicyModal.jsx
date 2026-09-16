@@ -62,7 +62,6 @@ export default function CreatePolicyModal({
         formData.deductible,
       );
       toast.success(response?.data?.message || "Policy Created Successfully!");
-      await new Promise((resolve) => setTimeout(resolve, 5000));
       onClose();
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to create policy");
