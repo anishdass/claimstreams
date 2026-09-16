@@ -24,7 +24,6 @@ const PasswordChangeModal = ({ onClose }) => {
       const response2 = await loginCall(user.email, newPassword);
       setUser(response2.user);
       onClose();
-      await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (err) {
       toast.error(err?.response?.data?.message || "An error occurred");
     } finally {

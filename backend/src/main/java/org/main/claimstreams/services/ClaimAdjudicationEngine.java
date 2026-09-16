@@ -66,7 +66,7 @@ public class ClaimAdjudicationEngine {
             int calculatedRiskScore = evaluateRiskScore(claim, policy);
             claim.setRiskScore(calculatedRiskScore);
 
-            if (calculatedRiskScore > 60) {
+            if (calculatedRiskScore < 60) {
                 BigDecimal netPayout = claim.getClaimedAmount().subtract(policy.getDeductible());
                 claim.setApprovedPayoutAmount(netPayout.max(BigDecimal.ZERO));
                 claim.setStatus(InsuranceClaimStatus.AUTO_APPROVED);

@@ -46,7 +46,7 @@ spring:
         truststore:
           location: ${kafka.truststore.path:}
           password: ${kafka.truststore.password:}
-          type: ${kafka.truststore.type:JKS}
+          type: JKS
 
 logging:
   level:
