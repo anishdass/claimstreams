@@ -1,43 +1,45 @@
 import { SquareUser } from "lucide-react";
+
 import ProfileBadge from "../ProfileBadge";
 
 export function CustomerTopbar({ user }) {
   return (
-    <header className='flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800/80 mb-6 bg-slate-900/40 backdrop-blur-md px-6 pt-4 rounded-2xl border border-slate-800/50 shadow-xl shadow-black/20'>
-      {/* Left: Branding & Telemetry */}
-      <div className='flex items-center gap-4'>
-        <div className='relative p-3 rounded-2xl bg-gradient-to-br from-indigo-500/20 via-indigo-500/10 to-purple-500/5 border border-indigo-500/30 text-indigo-400 shadow-lg shadow-indigo-500/10'>
-          <SquareUser className='w-6 h-6' />
-          <span className='absolute -top-1 -right-1 flex h-3 w-3'>
-            <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75'></span>
-            <span className='relative inline-flex rounded-full h-3 w-3 bg-emerald-500 ring-2 ring-slate-950'></span>
-          </span>
-        </div>
+    <header className='mb-6 flex flex-col gap-4 border-b border-slate-800 pb-5 sm:flex-row sm:items-center sm:justify-between'>
+      <div className='min-w-0'>
+        <div className='flex flex-wrap items-center gap-x-2 gap-y-1'>
+          <div className='ml-2 flex items-center gap-2'>
+            <div className='relative shrink-0 rounded-xl border border-indigo-500/30 bg-linear-to-br from-indigo-500/20 to-purple-500/10 p-3 text-indigo-400 shadow-lg shadow-indigo-500/5'>
+              <SquareUser className='h-7 w-7' />
 
-        <div className='space-y-1'>
-          <div className='flex items-center flex-wrap gap-2.5'>
-            <h1 className='text-xl font-bold text-white tracking-tight'>
+              <span className='absolute -right-1 -top-1 flex h-2.5 w-2.5'>
+                <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75'></span>
+                <span className='relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500'></span>
+              </span>
+            </div>
+
+            <h1 className='text-xl font-bold tracking-tight text-white'>
               Customer Portal
             </h1>
-            <span className='px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full shadow-sm'>
-              Secure v2.4
-            </span>
           </div>
-          <p className='text-xs text-slate-400 font-medium flex items-center gap-2'>
-            <span>ClaimStreams InsurTech Operations</span>
-            <span className='text-slate-600'>•</span>
-            <span className='text-slate-300'>
+        </div>
+
+        <div className='ml-0'>
+          <p className='mt-1 flex flex-wrap items-center text-xs font-medium text-slate-400'>
+            <span className='text-slate-500'>
               Welcome back,{" "}
-              <span className='text-indigo-400 font-semibold'>
+              <span className='font-medium text-indigo-400'>
                 {user?.fullName || "Valued Customer"}
               </span>
             </span>
+            <span className='mx-2 text-slate-600' aria-hidden='true'>
+              •
+            </span>
+            Manage your policies, coverage, and claims in one place.
           </p>
         </div>
       </div>
 
-      {/* Right: User Profile Control */}
-      <div className='flex items-center gap-3 self-end md:self-center'>
+      <div className='flex items-center gap-3 self-end sm:self-auto'>
         <ProfileBadge />
       </div>
     </header>
